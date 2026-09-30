@@ -58,8 +58,10 @@ Values the `gh-*` skills read. Keep in sync with the repository and project sett
 - Project node id: PVT_kwHOBFNXic4BlL6g
 - Default branch: main
 - Integration branch: dev
-- Pull request base: main
+- Pull request base: dev
 - Required check: check-pull-request-body
 - Status options: Todo, In Progress, In Review, Blocked, Done
 - Project fields: Status, Priority, Size, Discipline, Sprint
 - Token secret: PROJECT_TOKEN
+
+Branch flow: work branches start from `dev` and pull requests target `dev`. `main` receives only promotion pull requests from `dev` (merge commit). After a change lands on `main`, sync it back into `dev` with a merge-commit pull request.
