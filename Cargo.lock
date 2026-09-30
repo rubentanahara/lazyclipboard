@@ -1713,6 +1713,9 @@ dependencies = [
 [[package]]
 name = "lazyclipboard-os"
 version = "0.0.0"
+dependencies = [
+ "lazyclipboard-core",
+]
 
 [[package]]
 name = "libappindicator"
