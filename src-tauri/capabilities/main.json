@@ -1,0 +1,26 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Commands and events the main window may use",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-groups-list",
+    "allow-group-create",
+    "allow-group-rename",
+    "allow-group-reorder",
+    "allow-group-delete",
+    "allow-group-set-never-send-to-ai",
+    "allow-items-list",
+    "allow-items-search",
+    "allow-item-get",
+    "allow-item-delete",
+    "allow-item-undo-delete",
+    "allow-settings-get",
+    "allow-platform-info",
+    "allow-window-open"
+  ]
+}

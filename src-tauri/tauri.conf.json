@@ -9,7 +9,34 @@
     "frontendDist": "../apps/ui/dist"
   },
   "app": {
-    "windows": [{ "title": "lazyclipboard" }]
+    "windows": [
+      {
+        "label": "panel",
+        "title": "lazyclipboard",
+        "url": "src/windows/panel/index.html",
+        "visible": false
+      },
+      {
+        "label": "main",
+        "title": "lazyclipboard",
+        "url": "src/windows/main/index.html"
+      },
+      {
+        "label": "settings",
+        "title": "lazyclipboard",
+        "url": "src/windows/settings/index.html",
+        "create": false
+      },
+      {
+        "label": "onboarding",
+        "title": "lazyclipboard",
+        "url": "src/windows/onboarding/index.html",
+        "create": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    }
   },
   "bundle": {
     "active": true,

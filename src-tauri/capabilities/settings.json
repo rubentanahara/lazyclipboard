@@ -1,0 +1,31 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "settings",
+  "description": "Commands and events the settings window may use",
+  "windows": [
+    "settings"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-groups-list",
+    "allow-group-create",
+    "allow-group-rename",
+    "allow-group-reorder",
+    "allow-group-delete",
+    "allow-group-set-never-send-to-ai",
+    "allow-ai-key-set",
+    "allow-ai-key-delete",
+    "allow-ai-key-status",
+    "allow-ai-test-connection",
+    "allow-settings-get",
+    "allow-settings-update",
+    "allow-shortcut-set",
+    "allow-platform-info",
+    "allow-permission-status",
+    "allow-permission-open-settings",
+    "allow-window-open",
+    "allow-diagnostics-export",
+    "allow-usage-clear"
+  ]
+}

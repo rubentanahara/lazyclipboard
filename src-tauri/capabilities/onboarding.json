@@ -1,0 +1,23 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "onboarding",
+  "description": "Commands and events the onboarding window may use",
+  "windows": [
+    "onboarding"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-groups-list",
+    "allow-ai-key-set",
+    "allow-ai-key-delete",
+    "allow-ai-key-status",
+    "allow-ai-test-connection",
+    "allow-settings-get",
+    "allow-settings-update",
+    "allow-shortcut-set",
+    "allow-platform-info",
+    "allow-permission-status",
+    "allow-permission-open-settings"
+  ]
+}
