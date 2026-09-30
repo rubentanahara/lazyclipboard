@@ -6,3 +6,10 @@ publish = false
 
 [dependencies]
 rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+specta = { version = "=2.0.0-rc.25", features = ["derive"] }
+specta-typescript = "0.0.12"
+thiserror = "2"
+
+[dev-dependencies]
+specta-serde = "0.0.12"
