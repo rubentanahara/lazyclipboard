@@ -853,6 +853,9 @@
                     "szd5O": {
                       "content": "Text · Safari · 2m ago"
                     },
+                    "Pxico": {
+                      "enabled": true
+                    },
                     "dZCIO/mIjQn": {
                       "content": "↵"
                     },
@@ -905,6 +908,9 @@
                     "vB9Gr": {
                       "content": "Link · Chrome · 1h ago"
                     },
+                    "P3g6B": {
+                      "enabled": false
+                    },
                     "R9SL7": {
                       "enabled": false
                     }
@@ -948,6 +954,9 @@
                     },
                     "vB9Gr": {
                       "content": "Text · Notion · Mon"
+                    },
+                    "P3g6B": {
+                      "enabled": true
                     },
                     "R9SL7": {
                       "enabled": false
@@ -1436,6 +1445,9 @@
                         "K4e2Q1": {
                           "content": "Use a 4pt spacing scale so components stay aligned across breakpoints."
                         },
+                        "wNspD": {
+                          "enabled": true
+                        },
                         "NwWz5": {
                           "content": "Safari · 2m ago"
                         }
@@ -1476,6 +1488,9 @@
                         "l1gUC": {
                           "content": "https://linear.app/method"
                         },
+                        "Lnbtt": {
+                          "enabled": false
+                        },
                         "h0m3lz": {
                           "content": "Chrome · 1h ago"
                         }
@@ -1513,6 +1528,9 @@
                         },
                         "l1gUC": {
                           "content": "Cards should never nest more than two levels deep."
+                        },
+                        "Lnbtt": {
+                          "enabled": true
                         },
                         "h0m3lz": {
                           "content": "Notion · Mon"
@@ -19485,6 +19503,18 @@
                           ]
                         },
                         {
+                          "id": "P3g6B",
+                          "type": "ref",
+                          "ref": "Xzlgm",
+                          "name": "Format chip",
+                          "enabled": false,
+                          "descendants": {
+                            "FjrZs": {
+                              "content": "Formatted"
+                            }
+                          }
+                        },
+                        {
                           "type": "frame",
                           "id": "CsrcX",
                           "x": 0,
@@ -19648,6 +19678,18 @@
                               "fontWeight": "$fw-regular"
                             }
                           ]
+                        },
+                        {
+                          "id": "Pxico",
+                          "type": "ref",
+                          "ref": "Xzlgm",
+                          "name": "Format chip",
+                          "enabled": false,
+                          "descendants": {
+                            "FjrZs": {
+                              "content": "Formatted"
+                            }
+                          }
                         },
                         {
                           "type": "frame",
@@ -21590,6 +21632,18 @@
                           "fontWeight": "$fw-medium"
                         },
                         {
+                          "id": "Lnbtt",
+                          "type": "ref",
+                          "ref": "Xzlgm",
+                          "name": "Format chip",
+                          "enabled": false,
+                          "descendants": {
+                            "FjrZs": {
+                              "content": "Formatted"
+                            }
+                          }
+                        },
+                        {
                           "type": "text",
                           "id": "h0m3lz",
                           "name": "Meta",
@@ -21688,6 +21742,18 @@
                           "fontFamily": "$font",
                           "fontSize": "$text-body",
                           "fontWeight": "$fw-medium"
+                        },
+                        {
+                          "id": "wNspD",
+                          "type": "ref",
+                          "ref": "Xzlgm",
+                          "name": "Format chip",
+                          "enabled": false,
+                          "descendants": {
+                            "FjrZs": {
+                              "content": "Formatted"
+                            }
+                          }
                         },
                         {
                           "type": "text",
@@ -34687,7 +34753,7 @@
                       "fill": "$text",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Copy to Group, Paste from Group, Paste All from Group, Manage Items and Groups, each across three OSes and two themes.",
+                      "content": "Copy to Group, Paste from Group, Paste All from Group, Manage Items and Groups, First run (macOS, Windows and Linux differ), each across three OSes and two themes.",
                       "fontFamily": "$font",
                       "fontSize": "$text-body",
                       "fontWeight": "$fw-regular"
@@ -53054,7 +53120,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 1 of 5"
+                      "content": "Setup · Welcome"
                     }
                   }
                 }
@@ -53288,7 +53354,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 2 of 5"
+                      "content": "Setup · Access"
                     }
                   }
                 }
@@ -53477,7 +53543,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 2 of 5"
+                      "content": "Setup · Access"
                     }
                   }
                 }
@@ -53788,7 +53854,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 2 of 5"
+                      "content": "Setup · Access"
                     }
                   }
                 }
@@ -53952,7 +54018,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 3 of 5"
+                      "content": "Setup · Shortcuts"
                     }
                   }
                 }
@@ -54179,7 +54245,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 4 of 5"
+                      "content": "Setup · Startup"
                     }
                   }
                 }
@@ -54428,7 +54494,7 @@
                   "name": "Step Chip",
                   "descendants": {
                     "FjrZs": {
-                      "content": "Step 5 of 5"
+                      "content": "Setup · AI key"
                     }
                   }
                 }
@@ -54795,6 +54861,1236 @@
       "y": 76719,
       "theme": {
         "mode": "dark"
+      }
+    },
+    {
+      "type": "frame",
+      "id": "BuDvo",
+      "x": 0,
+      "y": 77599,
+      "name": "06 Flow · First run · macOS · Light",
+      "reusable": true,
+      "width": 3960,
+      "height": 2400,
+      "fill": "$surface",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "Lbvjp",
+          "x": 80,
+          "y": 48,
+          "name": "Flow 1 · Copy to Group",
+          "fill": "$text",
+          "content": "Flow 5 · First run",
+          "fontFamily": "$font",
+          "fontSize": "$text-board-title",
+          "fontWeight": "$fw-bold"
+        },
+        {
+          "type": "text",
+          "id": "igAmQ",
+          "x": 80,
+          "y": 92,
+          "name": "Select content in any ap",
+          "enabled": "$is-macos",
+          "fill": "$text-3",
+          "content": "Grant access, check shortcuts, choose startup, add an optional AI key",
+          "fontFamily": "$font",
+          "fontSize": "$text-title",
+          "fontWeight": "$fw-regular"
+        },
+        {
+          "type": "text",
+          "id": "ezEiP",
+          "x": 80,
+          "y": 92,
+          "name": "Select content in any ap ·win",
+          "enabled": "$is-windows",
+          "fill": "$text-3",
+          "content": "Check shortcuts, choose startup, add an optional AI key. Windows asks for no permission",
+          "fontFamily": "$font",
+          "fontSize": "$text-title",
+          "fontWeight": "$fw-regular"
+        },
+        {
+          "type": "text",
+          "id": "hNRFx",
+          "x": 80,
+          "y": 92,
+          "name": "Select content in any ap ·lnx",
+          "enabled": "$is-linux",
+          "fill": "$text-3",
+          "content": "Check shortcuts, choose startup, add an optional AI key. Wayland sessions get a paste notice",
+          "fontFamily": "$font",
+          "fontSize": "$text-title",
+          "fontWeight": "$fw-regular"
+        },
+        {
+          "type": "frame",
+          "id": "W5X3Sh",
+          "x": 80,
+          "y": 116,
+          "name": "Step 1",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "YCD4c",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aH9Li",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "X6gDAG",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Welcome",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "ufI3e",
+          "type": "ref",
+          "ref": "MDDDM",
+          "name": "Welcome",
+          "x": 80,
+          "y": 160
+        },
+        {
+          "type": "frame",
+          "id": "PTAa1",
+          "x": 880,
+          "y": 408,
+          "name": "Arrow ↵ continue",
+          "width": 200,
+          "layout": "vertical",
+          "gap": "$space-sm",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "GWYs2",
+              "name": "Label ⌘⌥C",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gIRQU",
+                  "name": "⌘⌥C",
+                  "enabled": "$is-macos",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "fVT6W",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·win",
+                  "enabled": "$is-windows",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "kyBNb",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·lnx",
+                  "enabled": "$is-linux",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G0JsCz",
+              "name": "Line",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "SeDQb",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "icon",
+                  "id": "pAAn8",
+                  "name": "arrow-right",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IzPpD",
+          "x": 1080,
+          "y": 116,
+          "name": "Step 2",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "KHqyb",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vBdvp",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "2",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "NTaXq",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Check shortcuts",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "a1G92",
+          "type": "ref",
+          "ref": "vYVK6",
+          "name": "Shortcuts",
+          "x": 1080,
+          "y": 160
+        },
+        {
+          "type": "frame",
+          "id": "Bm4Qo",
+          "x": 1880,
+          "y": 408,
+          "name": "Arrow ↵ continue",
+          "width": 200,
+          "layout": "vertical",
+          "gap": "$space-sm",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pMmeo",
+              "name": "Label ⌘⌥C",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oDCjc",
+                  "name": "⌘⌥C",
+                  "enabled": "$is-macos",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "V4Bmq",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·win",
+                  "enabled": "$is-windows",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "lsuHu",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·lnx",
+                  "enabled": "$is-linux",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GREBC",
+              "name": "Line",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "W01t47",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "icon",
+                  "id": "J0A9vU",
+                  "name": "arrow-right",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qaNzd",
+          "x": 2080,
+          "y": 116,
+          "name": "Step 3",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "JoWm3",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iibJS",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "3",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "IA4nO",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Startup",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "k1r2AA",
+          "type": "ref",
+          "ref": "OYMsX",
+          "name": "Launch at Login",
+          "x": 2080,
+          "y": 160
+        },
+        {
+          "type": "frame",
+          "id": "wyZbT",
+          "x": 2880,
+          "y": 408,
+          "name": "Arrow ↵ continue",
+          "width": 200,
+          "layout": "vertical",
+          "gap": "$space-sm",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Yzb2s",
+              "name": "Label ⌘⌥C",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Iw9Bm",
+                  "name": "⌘⌥C",
+                  "enabled": "$is-macos",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "q7wpG",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·win",
+                  "enabled": "$is-windows",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "YMu00",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·lnx",
+                  "enabled": "$is-linux",
+                  "fill": "$accent",
+                  "content": "↵ continue",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PTIAd",
+              "name": "Line",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "TUUaO",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "icon",
+                  "id": "KNvM3",
+                  "name": "arrow-right",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "j9hoEq",
+          "x": 3080,
+          "y": 116,
+          "name": "Step 4",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "rvIWw",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Po7Vk",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "4",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "y4WRl",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "AI key, optional",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "QVlqv",
+          "type": "ref",
+          "ref": "PRlbn",
+          "name": "AI Key",
+          "x": 3080,
+          "y": 160
+        },
+        {
+          "type": "frame",
+          "id": "Y3BNo",
+          "x": 415,
+          "y": 720,
+          "name": "Arrow Access check",
+          "enabled": "$is-macos",
+          "height": 160,
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "nNZa2",
+              "name": "Line",
+              "width": 20,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "AQxl6",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": 2,
+                  "height": "fill_container"
+                },
+                {
+                  "type": "icon",
+                  "id": "cvtkP",
+                  "name": "arrow-down",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-down",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FEZqZ",
+              "name": "Label New group…",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dlibr",
+                  "name": "New group…",
+                  "fill": "$accent",
+                  "content": "Access check",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "F9sjn",
+          "x": 415,
+          "y": 720,
+          "name": "Arrow Wayland check",
+          "enabled": "$is-linux",
+          "height": 160,
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xEFCF",
+              "name": "Line",
+              "width": 20,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "kaQBg",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": 2,
+                  "height": "fill_container"
+                },
+                {
+                  "type": "icon",
+                  "id": "WBjjO",
+                  "name": "arrow-down",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-down",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bsHuU",
+              "name": "Label New group…",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "u5WHR",
+                  "name": "New group…",
+                  "fill": "$accent",
+                  "content": "Wayland check",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AP7kE",
+          "x": 80,
+          "y": 836,
+          "name": "Step A",
+          "enabled": "$is-macos",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "PIIMk",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Meclm",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "A",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Z3RBBy",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Turn on Accessibility",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "k33m5I",
+          "type": "ref",
+          "ref": "naXfK",
+          "name": "Permission",
+          "x": 80,
+          "y": 880,
+          "enabled": "$is-macos"
+        },
+        {
+          "type": "frame",
+          "id": "QawvL",
+          "x": 880,
+          "y": 1128,
+          "name": "Arrow access turned on",
+          "enabled": "$is-macos",
+          "width": 200,
+          "layout": "vertical",
+          "gap": "$space-sm",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "H8VXU",
+              "name": "Label ⌘⌥C",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XyCiO",
+                  "name": "⌘⌥C",
+                  "enabled": "$is-macos",
+                  "fill": "$accent",
+                  "content": "access turned on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "eID1l",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·win",
+                  "enabled": "$is-windows",
+                  "fill": "$accent",
+                  "content": "access turned on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "FSz8b",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·lnx",
+                  "enabled": "$is-linux",
+                  "fill": "$accent",
+                  "content": "access turned on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mKbJI",
+              "name": "Line",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "AIkSD",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "icon",
+                  "id": "rzdQX",
+                  "name": "arrow-right",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VZVfl",
+          "x": 1080,
+          "y": 836,
+          "name": "Step B",
+          "enabled": "$is-macos",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "SAIZ4",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dfNYN",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "B",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "VjJIL",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Granted, continue to Shortcuts",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "Q5Y3X",
+          "type": "ref",
+          "ref": "A2pjFa",
+          "name": "Permission Granted",
+          "x": 1080,
+          "y": 880,
+          "enabled": "$is-macos"
+        },
+        {
+          "type": "frame",
+          "id": "Y1j55",
+          "x": 80,
+          "y": 836,
+          "name": "Step A",
+          "enabled": "$is-linux",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "s41OM",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Q7sxwb",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "A",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "U89f6",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Wayland limits automatic paste",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "gFych",
+          "type": "ref",
+          "ref": "Hc3yD",
+          "name": "Wayland Notice",
+          "x": 80,
+          "y": 880,
+          "enabled": "$is-linux"
+        },
+        {
+          "type": "frame",
+          "id": "K3W2sl",
+          "x": 80,
+          "y": 880,
+          "name": "Windows note",
+          "enabled": "$is-windows",
+          "width": 800,
+          "height": 560,
+          "fill": "$surface-alt",
+          "cornerRadius": "$rounded-lg",
+          "layout": "vertical",
+          "padding": "$space-2xl",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "xzR7W",
+              "name": "Windows note text",
+              "fill": "$text-2",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Windows needs no permission. Shortcuts and paste work as soon as the app runs.",
+              "lineHeight": "$leading-body",
+              "textAlign": "center",
+              "fontFamily": "$font",
+              "fontSize": "$text-ui",
+              "fontWeight": "$fw-medium"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "H5ivH",
+          "x": 80,
+          "y": 1540,
+          "name": "Edge states title",
+          "enabled": "$is-macos",
+          "fill": "$text",
+          "content": "Edge states · access lost",
+          "fontFamily": "$font",
+          "fontSize": "$text-heading",
+          "fontWeight": "$fw-bold"
+        },
+        {
+          "type": "frame",
+          "id": "Qbffu",
+          "x": 80,
+          "y": 1636,
+          "name": "Step 1",
+          "enabled": "$is-macos",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "WLpAb",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UNt0l",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Zj19V",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Access turned off after setup",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "Ohj09",
+          "type": "ref",
+          "ref": "VZjS5",
+          "name": "Permission Revoked",
+          "x": 80,
+          "y": 1680,
+          "enabled": "$is-macos"
+        },
+        {
+          "type": "frame",
+          "id": "hbzrK",
+          "x": 880,
+          "y": 1928,
+          "name": "Arrow turned back on",
+          "enabled": "$is-macos",
+          "width": 200,
+          "layout": "vertical",
+          "gap": "$space-sm",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FFkLP",
+              "name": "Label ⌘⌥C",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-pill",
+              "padding": [
+                "$space-xs",
+                "$space-md"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b0ozE",
+                  "name": "⌘⌥C",
+                  "enabled": "$is-macos",
+                  "fill": "$accent",
+                  "content": "turned back on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "xQRAG",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·win",
+                  "enabled": "$is-windows",
+                  "fill": "$accent",
+                  "content": "turned back on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "rjT8X",
+                  "x": 0,
+                  "y": 0,
+                  "name": "⌘⌥C ·lnx",
+                  "enabled": "$is-linux",
+                  "fill": "$accent",
+                  "content": "turned back on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ywxSm",
+              "name": "Line",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "IfgI4",
+                  "name": "Shaft",
+                  "fill": "$accent",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "icon",
+                  "id": "fi7m6",
+                  "name": "arrow-right",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xK732",
+          "x": 1080,
+          "y": 1636,
+          "name": "Step 2",
+          "enabled": "$is-macos",
+          "gap": "$space-md",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "HK57i",
+              "name": "Number",
+              "width": 26,
+              "height": 26,
+              "fill": "$accent",
+              "cornerRadius": "$rounded-pill",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zhXpC",
+                  "name": "1",
+                  "fill": "$text-on-accent",
+                  "content": "2",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-body",
+                  "fontWeight": "$fw-semibold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "aWjHk",
+              "name": "Select text in any app",
+              "fill": "$text",
+              "content": "Granted again",
+              "fontFamily": "$font",
+              "fontSize": "$text-title",
+              "fontWeight": "$fw-semibold"
+            }
+          ]
+        },
+        {
+          "id": "qHy8c",
+          "type": "ref",
+          "ref": "A2pjFa",
+          "name": "Permission Granted again",
+          "x": 1080,
+          "y": 1680,
+          "enabled": "$is-macos"
+        }
+      ]
+    },
+    {
+      "id": "eJRQW",
+      "type": "ref",
+      "ref": "BuDvo",
+      "name": "06 Flow · First run · macOS · Dark",
+      "x": 0,
+      "y": 80159,
+      "theme": {
+        "mode": "dark",
+        "os": "macos"
+      }
+    },
+    {
+      "id": "x89K2q",
+      "type": "ref",
+      "ref": "BuDvo",
+      "name": "06 Flow · First run · Windows · Light",
+      "x": 4120,
+      "y": 77599,
+      "theme": {
+        "mode": "light",
+        "os": "windows"
+      }
+    },
+    {
+      "id": "YmAcb",
+      "type": "ref",
+      "ref": "BuDvo",
+      "name": "06 Flow · First run · Windows · Dark",
+      "x": 4120,
+      "y": 80159,
+      "theme": {
+        "mode": "dark",
+        "os": "windows"
+      }
+    },
+    {
+      "id": "G2GQC6",
+      "type": "ref",
+      "ref": "BuDvo",
+      "name": "06 Flow · First run · Linux · Light",
+      "x": 8240,
+      "y": 77599,
+      "theme": {
+        "mode": "light",
+        "os": "linux"
+      }
+    },
+    {
+      "id": "xeIC0",
+      "type": "ref",
+      "ref": "BuDvo",
+      "name": "06 Flow · First run · Linux · Dark",
+      "x": 8240,
+      "y": 80159,
+      "theme": {
+        "mode": "dark",
+        "os": "linux"
       }
     }
   ],
