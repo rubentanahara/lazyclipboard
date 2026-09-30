@@ -285,7 +285,7 @@ Onboarding is one window, `05 Screen · Onboarding ·` (Welcome, Permission, Sho
 
 ### Content formats
 
-A text item may carry rich text. Previews are always plain text; the Detail pane shows `Format: Rich text` and the row carries a neutral `Formatted` Chip (an optional `Format chip` in Item Row, Item Row Selected, Row Default and Row Selected, off by default; never a new icon or type). `⇧↵` pastes the plain flavour. Paste All and AI use plain text only.
+A matched search term is a `selection` chip with an underline, so the match never relies on tint alone. The skipped-image Note has no action. A text item may carry rich text. Previews are always plain text; the Detail pane shows `Format: Rich text` and the row carries a neutral `Formatted` Chip (an optional `Format chip` in Item Row, Item Row Selected, Row Default and Row Selected, off by default; never a new icon or type). `⇧↵` pastes the plain flavour. Paste All and AI use plain text only.
 
 ### Navigation keys (Vim mode)
 

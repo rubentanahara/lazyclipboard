@@ -26,6 +26,7 @@ One issue owns one directory. Do not edit outside it; if you need a change elsew
 | `apps/ui/src/windows/<name>` | one entry per window: panel, main, settings, onboarding |
 | `packages/tokens` | CSS variables generated from `DESIGN.md` |
 | `packages/components` | the component library from `04 Components` |
+| `src-tauri/src`, `apps/ui/src/shared`, capability files | The Sprint 0 contracts issue only; later changes go through a comment on that issue |
 | `docs` | PRD and ADRs |
 | `.github` | workflows and CODEOWNERS; owner review required |
 

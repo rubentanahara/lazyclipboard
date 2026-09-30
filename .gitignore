@@ -12,3 +12,5 @@ target/
 *.mobileprovision
 
 .claude/docs/
+docs/.pdfbuild/
+docs/*.pdf
