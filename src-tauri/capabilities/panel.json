@@ -1,0 +1,30 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "panel",
+  "description": "Commands and events the panel window may use",
+  "windows": [
+    "panel"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-groups-list",
+    "allow-group-create",
+    "allow-items-list",
+    "allow-items-search",
+    "allow-item-get",
+    "allow-item-delete",
+    "allow-item-undo-delete",
+    "allow-capture-save",
+    "allow-capture-discard",
+    "allow-paste-item",
+    "allow-paste-all",
+    "allow-paste-ai-result",
+    "allow-panel-close",
+    "allow-ai-reformat",
+    "allow-ai-summarize",
+    "allow-settings-get",
+    "allow-platform-info",
+    "allow-window-open"
+  ]
+}
