@@ -14,8 +14,20 @@ const MODIFIER_KEYS = new Set(["Control", "Alt", "Shift", "Meta"]);
 const UNSET_LABEL = "Not set";
 const RECORDING_LABEL = "Press a shortcut";
 
+const PHYSICAL_KEY_PATTERN = /^(?:Key|Digit)(.)$/;
+
+function physicalKeyName(event: KeyboardEvent): string {
+  const physical = PHYSICAL_KEY_PATTERN.exec(event.code);
+  if (physical) return physical[1];
+  return event.key.length === 1 ? event.key.toUpperCase() : event.key;
+}
+
+function hasModifier(event: KeyboardEvent): boolean {
+  return event.ctrlKey || event.altKey || event.shiftKey || event.metaKey;
+}
+
 function formatChord(event: KeyboardEvent): string {
-  const key = event.key.length === 1 ? event.key.toUpperCase() : event.key;
+  const key = physicalKeyName(event);
   const isMac = navigator.userAgent.includes("Mac");
   if (isMac) {
     return `${event.ctrlKey ? "⌃" : ""}${event.altKey ? "⌥" : ""}${event.shiftKey ? "⇧" : ""}${event.metaKey ? "⌘" : ""}${key}`;
@@ -40,7 +52,7 @@ export function ShortcutField({ label, value, onChange, conflict, locked = false
       setRecording(false);
       return;
     }
-    if (MODIFIER_KEYS.has(event.key)) return;
+    if (MODIFIER_KEYS.has(event.key) || !hasModifier(event)) return;
     onChange(formatChord(event));
     setRecording(false);
   };

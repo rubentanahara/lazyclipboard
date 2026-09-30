@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent } from "storybook/test";
+import { expect, fireEvent, fn, userEvent } from "storybook/test";
 import { ShortcutField } from "./ShortcutField";
 import { withStoryFrame } from "./storyFrame";
 
@@ -42,6 +42,26 @@ export const RecordsChord: Story = {
     await userEvent.keyboard("{Control>}{Alt>}k{/Alt}{/Control}");
     await expect(args.onChange).toHaveBeenCalledTimes(1);
     await expect(args.onChange).toHaveBeenCalledWith(expect.stringMatching(/K$/));
+  },
+};
+
+export const RecordsPhysicalKeyWhenOptionChangesTheCharacter: Story = {
+  play: async ({ canvas, args }) => {
+    const field = canvas.getByRole("button", { name: "Copy to group shortcut" });
+    await userEvent.click(field);
+    await fireEvent.keyDown(field, { key: "˚", code: "KeyK", altKey: true, ctrlKey: true });
+    await expect(args.onChange).toHaveBeenCalledWith(expect.stringMatching(/K$/));
+  },
+};
+
+export const IgnoresKeyWithoutModifier: Story = {
+  play: async ({ canvas, args }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy to group shortcut" }));
+    await userEvent.keyboard("k");
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(canvas.getByRole("button", { name: "Copy to group shortcut" })).toHaveTextContent(
+      "Press a shortcut",
+    );
   },
 };
 
