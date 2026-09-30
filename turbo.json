@@ -5,6 +5,19 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
+    },
+    "storybook": {
+      "dependsOn": ["^build"],
+      "persistent": true,
+      "cache": false
+    },
+    "build:storybook": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/apps/ui/src/**", "$TURBO_ROOT$/packages/components/src/**"],
+      "outputs": ["storybook-static/**"]
+    },
+    "test:storybook": {
+      "dependsOn": ["^build"]
     }
   }
 }

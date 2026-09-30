@@ -1,0 +1,32 @@
+{
+  "name": "@lazyclipboard/storybook",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "storybook": "pnpm tokens && storybook dev --port 6006 --no-open",
+    "tokens": "pnpm --filter @lazyclipboard/tokens build",
+    "build:storybook": "pnpm tokens && storybook build",
+    "test:storybook": "pnpm tokens && vitest run --project=storybook",
+    "types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^10.6.1",
+    "@storybook/addon-vitest": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/browser-playwright": "5.0.2",
+    "playwright": "^1.63.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "storybook": "^10.6.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "5.0.2"
+  },
+  "dependencies": {
+    "@lazyclipboard/tokens": "workspace:*"
+  }
+}
