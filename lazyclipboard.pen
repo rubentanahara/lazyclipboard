@@ -1572,6 +1572,21 @@
                   "letterSpacing": "$tracking-overline"
                 },
                 {
+                  "id": "BENHK",
+                  "type": "ref",
+                  "ref": "ghBha",
+                  "name": "Format",
+                  "width": "fill_container",
+                  "descendants": {
+                    "wM0Zn": {
+                      "content": "Format"
+                    },
+                    "fNTPO": {
+                      "content": "Rich text"
+                    }
+                  }
+                },
+                {
                   "type": "frame",
                   "id": "k9UAN",
                   "name": "Preview",
@@ -28292,7 +28307,7 @@
                               "name": "Stepper",
                               "descendants": {
                                 "ouYEs": {
-                                  "content": "50"
+                                  "content": "200"
                                 }
                               }
                             }
@@ -28321,7 +28336,150 @@
                               "name": "Select",
                               "descendants": {
                                 "z1JYo": {
-                                  "content": "30 days"
+                                  "content": "Never"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "C0Dqk1",
+                  "name": "Startup",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": "$space-md",
+                  "children": [
+                    {
+                      "id": "k9Fx2",
+                      "type": "ref",
+                      "ref": "dGf62",
+                      "name": "Heading",
+                      "descendants": {
+                        "H43PoW": {
+                          "content": "Startup"
+                        },
+                        "iPReW": {
+                          "content": "lazyclipboard runs in the tray and stays out of the way."
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ySlEF",
+                      "name": "Retention rows",
+                      "clip": true,
+                      "width": "fill_container",
+                      "cornerRadius": "$rounded-md",
+                      "stroke": "$border",
+                      "strokeWidth": "$stroke-hairline",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "CkIrv",
+                          "type": "ref",
+                          "ref": "cCnIM",
+                          "name": "Launch at login",
+                          "width": "fill_container",
+                          "descendants": {
+                            "B6ubY": {
+                              "content": "Launch at login"
+                            },
+                            "Z3qePs": {
+                              "id": "d1mg4",
+                              "type": "ref",
+                              "ref": "BM5VY",
+                              "name": "Control"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ruZjL",
+                  "name": "Privacy",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": "$space-md",
+                  "children": [
+                    {
+                      "id": "K0RryA",
+                      "type": "ref",
+                      "ref": "dGf62",
+                      "name": "Heading",
+                      "descendants": {
+                        "H43PoW": {
+                          "content": "Privacy"
+                        },
+                        "iPReW": {
+                          "content": "Usage stats stay on this device. Nothing is sent anywhere."
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vmymR",
+                      "name": "Retention rows",
+                      "clip": true,
+                      "width": "fill_container",
+                      "cornerRadius": "$rounded-md",
+                      "stroke": "$border",
+                      "strokeWidth": "$stroke-hairline",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "BaF5u",
+                          "type": "ref",
+                          "ref": "cCnIM",
+                          "name": "Keep usage stats for 90 days",
+                          "width": "fill_container",
+                          "descendants": {
+                            "B6ubY": {
+                              "content": "Keep usage stats for 90 days"
+                            },
+                            "Z3qePs": {
+                              "id": "Q7qUPL",
+                              "type": "ref",
+                              "ref": "BM5VY",
+                              "name": "Control"
+                            }
+                          }
+                        },
+                        {
+                          "id": "Q3Dcu",
+                          "type": "ref",
+                          "ref": "QkxGZ",
+                          "name": "Divider",
+                          "width": "fill_container"
+                        },
+                        {
+                          "id": "eXLeo",
+                          "type": "ref",
+                          "ref": "cCnIM",
+                          "name": "Export diagnostics",
+                          "width": "fill_container",
+                          "descendants": {
+                            "B6ubY": {
+                              "content": "Export diagnostics"
+                            },
+                            "Z3qePs": {
+                              "id": "X9ifW",
+                              "type": "ref",
+                              "ref": "w6dqP",
+                              "name": "Control",
+                              "descendants": {
+                                "jRWBN": {
+                                  "icon": "external-link"
+                                },
+                                "IsQIc": {
+                                  "content": "Export JSON"
                                 }
                               }
                             }
@@ -30953,6 +31111,29 @@
                               "descendants": {
                                 "kWEO8": {
                                   "content": "sk-ant-••••••••••••••••"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "id": "d5xxn",
+                          "type": "ref",
+                          "ref": "cCnIM",
+                          "name": "Model",
+                          "width": "fill_container",
+                          "descendants": {
+                            "B6ubY": {
+                              "content": "Model (optional)"
+                            },
+                            "Z3qePs": {
+                              "id": "N5bJy",
+                              "type": "ref",
+                              "ref": "E7y1z",
+                              "name": "Select",
+                              "descendants": {
+                                "z1JYo": {
+                                  "content": "Default"
                                 }
                               }
                             }
@@ -34473,7 +34654,7 @@
                       "fill": "$text",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "31 screens, each with a dark instance. Selection is accent-soft, a 2px accent bar and accent text.",
+                      "content": "52 screens, each with a dark instance. Selection is accent-soft, a 2px accent bar and accent text.",
                       "fontFamily": "$font",
                       "fontSize": "$text-body",
                       "fontWeight": "$fw-regular"
@@ -34633,7 +34814,7 @@
                           "fill": "$text",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "Key Cap, Divider, Group Tag, Chip, Toggle On and Off, Button Primary (Hover, Active, Focus), Button Secondary, Button Danger, Icon Button, Search Field (Focus), Tray Menu Panel, Notification Toast, Shortcut Recording, Shortcut Conflict.",
+                          "content": "Key Cap, Divider, Group Tag, Chip, Toggle On and Off, Button Primary (Hover, Active, Focus), Button Secondary, Button Danger, Search Field (Focus), Tray Menu Panel, Notification Toast, Shortcut Recording, Shortcut Conflict.",
                           "fontFamily": "$font",
                           "fontSize": "$text-body",
                           "fontWeight": "$fw-regular"
@@ -35183,7 +35364,7 @@
                       "fill": "$text",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "In: copy to group, paste from group with search, AI reformat, Paste All with optional AI summary, main window, settings, tray menu, copy notification, three OSes in light and dark.",
+                      "content": "In: first-run onboarding (permission, shortcuts, launch at login, optional AI key), copy to group, paste from group with search, AI reformat with Anthropic, OpenAI or Gemini, Paste All with optional AI summary, rich text and images, main window, settings, tray menu, copy notification, local-only usage stats, three OSes in light and dark.",
                       "fontFamily": "$font",
                       "fontSize": "$text-body",
                       "fontWeight": "$fw-regular"
@@ -38194,7 +38375,7 @@
               "fill": "$text-2",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Six entry points, each opening a small floating panel or a window. 43 screens designed, no known gaps. Retrofit: derived from the existing 05 Screen frames.",
+              "content": "Seven entry points, each opening a small floating panel or a window. 52 screens designed, no known gaps. Retrofit: derived from the existing 05 Screen frames.",
               "fontFamily": "$font",
               "fontSize": "$text-ui",
               "fontWeight": "$fw-regular"
@@ -40120,6 +40301,274 @@
         },
         {
           "type": "frame",
+          "id": "uLIpY",
+          "name": "Column · Onboarding",
+          "width": "fill_container",
+          "fill": "$surface-alt",
+          "cornerRadius": "$rounded-lg",
+          "layout": "vertical",
+          "gap": "$space-md",
+          "padding": "$space-md",
+          "children": [
+            {
+              "type": "text",
+              "id": "eOYCO",
+              "name": "Area · Copy",
+              "fill": "$text-2",
+              "content": "ONBOARDING",
+              "fontFamily": "$font",
+              "fontSize": "$text-overline",
+              "fontWeight": "$fw-semibold",
+              "letterSpacing": "$tracking-overline"
+            },
+            {
+              "type": "frame",
+              "id": "QUbux",
+              "name": "Entry · Copy",
+              "width": "fill_container",
+              "fill": "$accent-soft",
+              "cornerRadius": "$rounded-md",
+              "layout": "vertical",
+              "gap": "$space-2xs",
+              "padding": "$space-sm",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "odmfM",
+                  "name": "Entry Label · Copy",
+                  "fill": "$accent",
+                  "content": "ENTRY",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold"
+                },
+                {
+                  "type": "text",
+                  "id": "Dgfvh",
+                  "name": "Entry Value · Copy",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "First launch, or access is revoked",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qqeop",
+              "name": "Tree · Copy",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HRFN9",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yVBVs",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Welcome",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aD0MJ",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "irjgg",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Permission",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "km5dX",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o5HlfM",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Permission · Granted",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GYdkU",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jpVoI",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Shortcuts",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hXZtt",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RloOU",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Launch at Login",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wqAIc",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "D5d3eE",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · AI Key",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WL6Op",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ibccq",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Wayland Notice",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dY63Z",
+                  "name": "Node · Copy to Group",
+                  "width": "fill_container",
+                  "gap": "$space-xs",
+                  "padding": [
+                    "$space-xs",
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e1QA1",
+                      "name": "Node Label · Copy to Group",
+                      "fill": "$text",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Onboarding · Permission · Revoked",
+                      "fontFamily": "$font",
+                      "fontSize": "$text-small",
+                      "fontWeight": "$fw-medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "C7eW0D",
           "name": "Rules Grid",
           "width": "fill_container",
@@ -41001,7 +41450,7 @@
               "fill": "$text-2",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "43 designed screens, each with a Dark ref, and no known gaps. Priority is build order: P1 primary path (copy, paste), P2 entry and retrieval, P3 manage and settings, P4 AI and edge states.",
+              "content": "52 designed screens, each with a Dark ref, and no known gaps. Priority is build order: P1 primary path (copy, paste), P2 entry and retrieval, P3 manage and settings, P4 AI and edge states.",
               "fontFamily": "$font",
               "fontSize": "$text-ui",
               "fontWeight": "$fw-regular"
@@ -41098,6 +41547,710 @@
                   "fontSize": "$text-overline",
                   "fontWeight": "$fw-semibold",
                   "letterSpacing": "$tracking-overline"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DcHr2",
+              "name": "Area · Capture and tray",
+              "width": "fill_container",
+              "fill": "$accent-soft",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sn26e",
+                  "name": "Screen · Area · Capture and tray",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "ONBOARDING",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold",
+                  "letterSpacing": "$tracking-overline"
+                },
+                {
+                  "type": "text",
+                  "id": "nBzlE",
+                  "name": "State · Area · Capture and tray",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold",
+                  "letterSpacing": "$tracking-overline"
+                },
+                {
+                  "type": "text",
+                  "id": "DZjfD",
+                  "name": "Entry · Area · Capture and tray",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold",
+                  "letterSpacing": "$tracking-overline"
+                },
+                {
+                  "type": "text",
+                  "id": "fOtXd",
+                  "name": "Priority · Area · Capture and tray",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold",
+                  "letterSpacing": "$tracking-overline"
+                },
+                {
+                  "type": "text",
+                  "id": "xE52W",
+                  "name": "Status · Area · Capture and tray",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "fontFamily": "$font",
+                  "fontSize": "$text-overline",
+                  "fontWeight": "$fw-semibold",
+                  "letterSpacing": "$tracking-overline"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TmqKY",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kKUx1",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Welcome",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "uGAly",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "default",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "f7Mg2",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "First launch",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "suOnR",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "O8usdq",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JTpDJ",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FMxWi",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Permission",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "aUsJF",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "permission needed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "gNhvn",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Onboarding step 2 on macOS",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "XNs4U",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "merOI",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nE54B",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NXvn1",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Permission · Granted",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "pkXnl",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "success",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "T37dCz",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Accessibility turned on",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "cf8kD",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "X6W621",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QKyWS",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FKHKF",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Shortcuts",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "uedza",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "default",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "QgNfc",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Onboarding step 3",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "DgtsO",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P1",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "DPpt8",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZRisY",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k9QXX",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Permission · Revoked",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "syfFY",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "error",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "TNADw",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Capture or paste fails after access is turned off",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "RvnDM",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P2",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "LfM2C",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g15F9",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bFRzt",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Wayland Notice",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "Rbi1v",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "notice",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "oxd9l",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Onboarding step 2 on Linux Wayland",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "h8ADM",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P2",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "Eaz1R",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Eu874",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FWru9",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · Launch at Login",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "SLxUK",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "default",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "lPwE9",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Onboarding step 4",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "Kyjld",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P2",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "uJm7p",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qRwyQ",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eLfaG",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Onboarding · AI Key",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "vo4kz",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "optional",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "atRZy",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Onboarding step 5, skippable",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "I1Q74N",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P4",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "acHjv",
+                  "name": "Status · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
                 }
               ]
             },
@@ -44845,6 +45998,84 @@
                   "type": "text",
                   "id": "degJ4",
                   "name": "Status · Settings · Shortcuts · Conflict",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 84,
+                  "content": "designed",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nfEge",
+              "name": "Copy to Group",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": "$stroke-hairline"
+              },
+              "gap": "$space-md",
+              "padding": [
+                "$space-xs",
+                "$space-sm"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NAEMi",
+                  "name": "Screen · Copy to Group",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "05 Screen · Settings · AI · Provider Menu",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-medium"
+                },
+                {
+                  "type": "text",
+                  "id": "N7Mm5t",
+                  "name": "State · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 120,
+                  "content": "menu",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "SNhQC",
+                  "name": "Entry · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Provider select in Settings · AI",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "v4ATe",
+                  "name": "Priority · Copy to Group",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": 64,
+                  "content": "P4",
+                  "fontFamily": "$font",
+                  "fontSize": "$text-small",
+                  "fontWeight": "$fw-regular"
+                },
+                {
+                  "type": "text",
+                  "id": "E3Sokf",
+                  "name": "Status · Copy to Group",
                   "fill": "$text-2",
                   "textGrowth": "fixed-width",
                   "width": 84,
@@ -51749,6 +52980,1822 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "MDDDM",
+      "x": 0,
+      "y": 73279,
+      "name": "05 Screen · Onboarding · Welcome",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "G43OA5",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "C4Zhs2",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "drVgH",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "MHJqx",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "TZ9Ng",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 1 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VVsRN",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "f8UCU2",
+                  "type": "ref",
+                  "ref": "iRKBa",
+                  "name": "State Box",
+                  "width": "fill_container",
+                  "descendants": {
+                    "BloGk": {
+                      "icon": "clipboard-list",
+                      "fill": "$accent"
+                    },
+                    "xBrZv": {
+                      "content": "Welcome to lazyclipboard"
+                    },
+                    "hjinX": {
+                      "content": "Copy into named groups with one shortcut, paste from any group with another. Everything stays on this device."
+                    },
+                    "w6JNrp/uwtjD": {
+                      "icon": "arrow-right"
+                    },
+                    "w6JNrp/MNiiL": {
+                      "content": "Get started"
+                    },
+                    "uUo3Z": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "cK2CY",
+                  "name": "Shortcuts",
+                  "width": "fill_container",
+                  "gap": "$space-xl",
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "id": "rVWPw",
+                      "type": "ref",
+                      "ref": "KZmY8",
+                      "name": "Copy to group",
+                      "descendants": {
+                        "LPSVy/mIjQn": {
+                          "content": "⌘⌥C"
+                        },
+                        "LPSVy/UKmi3": {
+                          "content": "Win+Shift+C"
+                        },
+                        "LPSVy/r8a7ho": {
+                          "content": "Ctrl+Alt+C"
+                        },
+                        "im3k8": {
+                          "content": "Copy to group"
+                        }
+                      }
+                    },
+                    {
+                      "id": "TMLUe",
+                      "type": "ref",
+                      "ref": "KZmY8",
+                      "name": "Paste from group",
+                      "descendants": {
+                        "LPSVy/mIjQn": {
+                          "content": "⌘⌥V"
+                        },
+                        "LPSVy/UKmi3": {
+                          "content": "Win+Alt+V"
+                        },
+                        "LPSVy/r8a7ho": {
+                          "content": "Ctrl+Alt+V"
+                        },
+                        "im3k8": {
+                          "content": "Paste from group"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "wIx7T",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "nKmb2",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "FOzZM",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                },
+                {
+                  "id": "gAwkf",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Skip setup",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Skip setup"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "naXfK",
+      "x": 880,
+      "y": 73279,
+      "name": "05 Screen · Onboarding · Permission",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Z5Pojw",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "mmPf0",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "o59kJ",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "k1fpR",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "yI2sR",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 2 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EcMOt",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "Lo68f",
+                  "type": "ref",
+                  "ref": "iRKBa",
+                  "name": "State Box",
+                  "width": "fill_container",
+                  "descendants": {
+                    "BloGk": {
+                      "icon": "lock",
+                      "fill": "$accent"
+                    },
+                    "xBrZv": {
+                      "content": "Allow accessibility access"
+                    },
+                    "hjinX": {
+                      "content": "lazyclipboard needs it to copy your selection and paste into other apps. Turn it on in System Settings, Privacy & Security, Accessibility."
+                    },
+                    "w6JNrp/uwtjD": {
+                      "icon": "external-link"
+                    },
+                    "w6JNrp/MNiiL": {
+                      "content": "Open System Settings"
+                    },
+                    "uUo3Z": {
+                      "enabled": true
+                    },
+                    "uUo3Z/YKk6h": {
+                      "icon": "rotate-cw"
+                    },
+                    "uUo3Z/EEckr": {
+                      "content": "Check again"
+                    }
+                  }
+                },
+                {
+                  "id": "gSYre",
+                  "type": "ref",
+                  "ref": "v078W",
+                  "name": "Note",
+                  "width": "fill_container",
+                  "descendants": {
+                    "h0jOR": {
+                      "icon": "info",
+                      "fill": "$info"
+                    },
+                    "iJxmN": {
+                      "content": "Access is only used to send copy and paste. It never reads your screen or keystrokes."
+                    },
+                    "X0DqY7": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "u8YATr",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "e9fiVZ",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "v0Nfo",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Skip setup",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Skip setup"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "A2pjFa",
+      "x": 1760,
+      "y": 73279,
+      "name": "05 Screen · Onboarding · Permission · Granted",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "FB5OM",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "jp5YC",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "k2yz8",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "NL6s2",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "D8cCt",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 2 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HLT2c",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "E40Pv",
+                  "type": "ref",
+                  "ref": "iRKBa",
+                  "name": "State Box",
+                  "width": "fill_container",
+                  "descendants": {
+                    "BloGk": {
+                      "icon": "circle-check",
+                      "fill": "$success"
+                    },
+                    "xBrZv": {
+                      "content": "Access granted"
+                    },
+                    "hjinX": {
+                      "content": "Copy to group and paste from group are ready in every app."
+                    },
+                    "w6JNrp/uwtjD": {
+                      "icon": "arrow-right"
+                    },
+                    "w6JNrp/MNiiL": {
+                      "content": "Continue"
+                    },
+                    "uUo3Z": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "ktSPy",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "Oj6cL",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "RmbgW",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "VZjS5",
+      "x": 2640,
+      "y": 73279,
+      "name": "05 Screen · Onboarding · Permission · Revoked",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "mpUOL",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "p3oxOZ",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard"
+                }
+              }
+            },
+            {
+              "id": "jrHrO",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "diIHJ",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "VkBpW",
+                  "type": "ref",
+                  "ref": "iRKBa",
+                  "name": "State Box",
+                  "width": "fill_container",
+                  "descendants": {
+                    "BloGk": {
+                      "icon": "triangle-alert",
+                      "fill": "$warning"
+                    },
+                    "xBrZv": {
+                      "content": "Accessibility access was turned off"
+                    },
+                    "hjinX": {
+                      "content": "Copy to group and paste can't run until it is on again. Your groups and items are safe."
+                    },
+                    "w6JNrp/uwtjD": {
+                      "icon": "external-link"
+                    },
+                    "w6JNrp/MNiiL": {
+                      "content": "Open System Settings"
+                    },
+                    "uUo3Z": {
+                      "enabled": true
+                    },
+                    "uUo3Z/YKk6h": {
+                      "icon": "x"
+                    },
+                    "uUo3Z/EEckr": {
+                      "content": "Not now"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "j3o9F3",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "A97qGa",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "QhgqH",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Not now",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Not now"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Hc3yD",
+      "x": 0,
+      "y": 74559,
+      "name": "05 Screen · Onboarding · Wayland Notice",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GUTKA",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "oRWWG",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "vDdKY",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "aGtAf",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "sPG4E",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 2 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TPlsN",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "z8GFY",
+                  "type": "ref",
+                  "ref": "iRKBa",
+                  "name": "State Box",
+                  "width": "fill_container",
+                  "descendants": {
+                    "BloGk": {
+                      "icon": "triangle-alert",
+                      "fill": "$warning"
+                    },
+                    "xBrZv": {
+                      "content": "Wayland limits automatic paste"
+                    },
+                    "hjinX": {
+                      "content": "Your session doesn't let apps type into other apps. Paste puts the item on the clipboard; press Ctrl+V to finish. Shortcuts use the desktop portal."
+                    },
+                    "w6JNrp/uwtjD": {
+                      "icon": "arrow-right"
+                    },
+                    "w6JNrp/MNiiL": {
+                      "content": "Got it"
+                    },
+                    "uUo3Z": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "D53FZz",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "Nybru",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "OCnAL",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "vYVK6",
+      "x": 880,
+      "y": 74559,
+      "name": "05 Screen · Onboarding · Shortcuts",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "S1r1l5",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "I3bS6",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "tIgmP",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "Hznc1",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "yWtTq",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 3 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "O1NHyq",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "t1CEJ",
+                  "type": "ref",
+                  "ref": "dGf62",
+                  "name": "Heading",
+                  "descendants": {
+                    "H43PoW": {
+                      "content": "Check your shortcuts"
+                    },
+                    "iPReW": {
+                      "content": "Both work in any app. Click one to change it."
+                    }
+                  }
+                },
+                {
+                  "id": "L9GDM",
+                  "type": "ref",
+                  "ref": "JHf2x",
+                  "name": "Copy Shortcut",
+                  "width": "fill_container",
+                  "descendants": {
+                    "xc65Q": {
+                      "content": "Copy to group"
+                    }
+                  }
+                },
+                {
+                  "id": "o2fnj6",
+                  "type": "ref",
+                  "ref": "JHf2x",
+                  "name": "Paste Shortcut",
+                  "width": "fill_container",
+                  "descendants": {
+                    "xc65Q": {
+                      "content": "Paste from group"
+                    },
+                    "c1o9R/cnfuE": {
+                      "content": "⌘⌥V"
+                    },
+                    "c1o9R/dpymn": {
+                      "content": "Win+Alt+V"
+                    },
+                    "c1o9R/k84k7": {
+                      "content": "Ctrl+Alt+V"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "x5lpNW",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "gap": "$space-sm",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "id": "u7hbnh",
+                      "type": "ref",
+                      "ref": "OiWqB",
+                      "name": "Primary",
+                      "descendants": {
+                        "uwtjD": {
+                          "icon": "arrow-right"
+                        },
+                        "MNiiL": {
+                          "content": "Looks good"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "wE4GO",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "U0aea",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "xeIrf",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                },
+                {
+                  "id": "xcr5c",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Back",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Back"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "OYMsX",
+      "x": 1760,
+      "y": 74559,
+      "name": "05 Screen · Onboarding · Launch at Login",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "dCQjI",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "SLFlS",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "bVrYn",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "vZ1Hd",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "N3JVEL",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 4 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b97Mry",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "E4KIG",
+                  "type": "ref",
+                  "ref": "dGf62",
+                  "name": "Heading",
+                  "descendants": {
+                    "H43PoW": {
+                      "content": "Start with your computer"
+                    },
+                    "iPReW": {
+                      "content": "lazyclipboard lives in the tray, ready when you copy."
+                    }
+                  }
+                },
+                {
+                  "id": "GQXA8",
+                  "type": "ref",
+                  "ref": "cCnIM",
+                  "name": "Launch at login",
+                  "width": "fill_container",
+                  "descendants": {
+                    "B6ubY": {
+                      "content": "Launch at login"
+                    },
+                    "Z3qePs": {
+                      "id": "F4FOmM",
+                      "type": "ref",
+                      "ref": "BM5VY",
+                      "name": "Control"
+                    }
+                  }
+                },
+                {
+                  "id": "ezDja",
+                  "type": "ref",
+                  "ref": "cCnIM",
+                  "name": "Usage stats",
+                  "width": "fill_container",
+                  "descendants": {
+                    "B6ubY": {
+                      "content": "Keep usage stats on this device"
+                    },
+                    "Z3qePs": {
+                      "id": "er5GS",
+                      "type": "ref",
+                      "ref": "BM5VY",
+                      "name": "Control"
+                    }
+                  }
+                },
+                {
+                  "id": "pOzPb",
+                  "type": "ref",
+                  "ref": "v078W",
+                  "name": "Note",
+                  "width": "fill_container",
+                  "descendants": {
+                    "h0jOR": {
+                      "icon": "info",
+                      "fill": "$info"
+                    },
+                    "iJxmN": {
+                      "content": "Counts and timings only, never your items. Nothing leaves this device."
+                    },
+                    "X0DqY7": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "plPA2",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "gap": "$space-sm",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "id": "zT69z",
+                      "type": "ref",
+                      "ref": "OiWqB",
+                      "name": "Primary",
+                      "descendants": {
+                        "uwtjD": {
+                          "icon": "arrow-right"
+                        },
+                        "MNiiL": {
+                          "content": "Continue"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "CQnVH",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "B5TuE",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "T3B0js",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                },
+                {
+                  "id": "rbeaL",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Back",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Back"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PRlbn",
+      "x": 2640,
+      "y": 74559,
+      "name": "05 Screen · Onboarding · AI Key",
+      "reusable": true,
+      "clip": true,
+      "width": 800,
+      "height": 560,
+      "fill": "$bg-desktop",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "C2jmrZ",
+          "name": "Window",
+          "clip": true,
+          "width": 560,
+          "fill": "$surface",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-panel-y"
+            },
+            "blur": "$elevation-panel-blur"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "jw6DH",
+              "type": "ref",
+              "ref": "aEKuA",
+              "name": "Window Titlebar",
+              "width": "fill_container",
+              "descendants": {
+                "vDoR1": {
+                  "content": "lazyclipboard setup"
+                }
+              }
+            },
+            {
+              "id": "oolm7",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "zFaPa",
+              "name": "Step",
+              "width": "fill_container",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "children": [
+                {
+                  "id": "uqgVt",
+                  "type": "ref",
+                  "ref": "Xzlgm",
+                  "name": "Step Chip",
+                  "descendants": {
+                    "FjrZs": {
+                      "content": "Step 5 of 5"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z6MvJ",
+              "name": "Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": "$space-lg",
+              "padding": "$space-xl",
+              "children": [
+                {
+                  "id": "dpcle",
+                  "type": "ref",
+                  "ref": "dGf62",
+                  "name": "Heading",
+                  "descendants": {
+                    "H43PoW": {
+                      "content": "Add an AI key (optional)"
+                    },
+                    "iPReW": {
+                      "content": "Reformat and summaries send text to the provider you pick. You can add one later."
+                    }
+                  }
+                },
+                {
+                  "id": "p6rcq",
+                  "type": "ref",
+                  "ref": "cCnIM",
+                  "name": "Provider",
+                  "width": "fill_container",
+                  "descendants": {
+                    "B6ubY": {
+                      "content": "Provider"
+                    },
+                    "Z3qePs": {
+                      "id": "GMG79",
+                      "type": "ref",
+                      "ref": "E7y1z",
+                      "name": "Control",
+                      "descendants": {
+                        "z1JYo": {
+                          "content": "Anthropic"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "M5mlla",
+                  "type": "ref",
+                  "ref": "cCnIM",
+                  "name": "API key",
+                  "width": "fill_container",
+                  "descendants": {
+                    "B6ubY": {
+                      "content": "API key"
+                    },
+                    "Z3qePs": {
+                      "id": "g34tLP",
+                      "type": "ref",
+                      "ref": "HnPyI",
+                      "name": "Control"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "gnZFm",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "gap": "$space-sm",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "id": "a0SJ6",
+                      "type": "ref",
+                      "ref": "p6ziu",
+                      "name": "Secondary",
+                      "descendants": {
+                        "YKk6h": {
+                          "icon": "x"
+                        },
+                        "EEckr": {
+                          "content": "Skip for now"
+                        }
+                      }
+                    },
+                    {
+                      "id": "Y3UwjL",
+                      "type": "ref",
+                      "ref": "OiWqB",
+                      "name": "Primary",
+                      "descendants": {
+                        "uwtjD": {
+                          "icon": "circle-check"
+                        },
+                        "MNiiL": {
+                          "content": "Save and finish"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "N354Ge",
+              "type": "ref",
+              "ref": "QkxGZ",
+              "name": "Divider",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "zPauw",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$surface-alt",
+              "gap": "$space-lg",
+              "padding": [
+                "$space-md",
+                "$space-lg"
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "lvQsw",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Continue",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "↵"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "↵"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "↵"
+                    },
+                    "im3k8": {
+                      "content": "Continue"
+                    }
+                  }
+                },
+                {
+                  "id": "mEHYn",
+                  "type": "ref",
+                  "ref": "KZmY8",
+                  "name": "Skip setup",
+                  "descendants": {
+                    "LPSVy/mIjQn": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/UKmi3": {
+                      "content": "Esc"
+                    },
+                    "LPSVy/r8a7ho": {
+                      "content": "Esc"
+                    },
+                    "im3k8": {
+                      "content": "Skip setup"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Kkcmd",
+      "type": "ref",
+      "ref": "MDDDM",
+      "name": "05 Screen · Onboarding · Welcome · Dark",
+      "x": 0,
+      "y": 73919,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "ks35x",
+      "type": "ref",
+      "ref": "naXfK",
+      "name": "05 Screen · Onboarding · Permission · Dark",
+      "x": 880,
+      "y": 73919,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "XsI21",
+      "type": "ref",
+      "ref": "A2pjFa",
+      "name": "05 Screen · Onboarding · Permission · Granted · Dark",
+      "x": 1760,
+      "y": 73919,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "X4wUxv",
+      "type": "ref",
+      "ref": "VZjS5",
+      "name": "05 Screen · Onboarding · Permission · Revoked · Dark",
+      "x": 2640,
+      "y": 73919,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "PUQ0L",
+      "type": "ref",
+      "ref": "Hc3yD",
+      "name": "05 Screen · Onboarding · Wayland Notice · Dark",
+      "x": 0,
+      "y": 75199,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "nQ7Hc",
+      "type": "ref",
+      "ref": "vYVK6",
+      "name": "05 Screen · Onboarding · Shortcuts · Dark",
+      "x": 880,
+      "y": 75199,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "a79AZ",
+      "type": "ref",
+      "ref": "OYMsX",
+      "name": "05 Screen · Onboarding · Launch at Login · Dark",
+      "x": 1760,
+      "y": 75199,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "id": "YOcAc",
+      "type": "ref",
+      "ref": "PRlbn",
+      "name": "05 Screen · Onboarding · AI Key · Dark",
+      "x": 2640,
+      "y": 75199,
+      "theme": {
+        "mode": "dark"
+      }
+    },
+    {
+      "type": "frame",
+      "id": "hZ5Fp",
+      "x": 0,
+      "y": 75919,
+      "name": "05 Screen · Settings · AI · Provider Menu",
+      "reusable": true,
+      "clip": true,
+      "width": 1100,
+      "height": 720,
+      "layout": "none",
+      "children": [
+        {
+          "id": "u9iW2O",
+          "type": "ref",
+          "ref": "Vjvpv",
+          "name": "Settings",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "T6qXC",
+          "x": 780,
+          "y": 216,
+          "name": "Provider menu",
+          "width": 200,
+          "fill": "$surface-raised",
+          "cornerRadius": "$rounded-lg",
+          "stroke": "$border",
+          "strokeWidth": "$stroke-hairline",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "$shadow-color",
+            "offset": {
+              "x": 0,
+              "y": "$elevation-menu-y"
+            },
+            "blur": "$elevation-menu-blur"
+          },
+          "layout": "vertical",
+          "gap": "$space-2xs",
+          "padding": "$space-sm",
+          "children": [
+            {
+              "id": "BVCZh",
+              "type": "ref",
+              "ref": "tG41C",
+              "name": "Anthropic",
+              "width": "fill_container",
+              "descendants": {
+                "B7RBXM": {
+                  "icon": "sparkles"
+                },
+                "x26An": {
+                  "content": "Anthropic"
+                }
+              }
+            },
+            {
+              "id": "u4e5V2",
+              "type": "ref",
+              "ref": "b9cEXc",
+              "name": "OpenAI",
+              "width": "fill_container",
+              "descendants": {
+                "SGJXc": {
+                  "icon": "sparkles"
+                },
+                "X3jZH0": {
+                  "content": "OpenAI"
+                }
+              }
+            },
+            {
+              "id": "jxT5j",
+              "type": "ref",
+              "ref": "b9cEXc",
+              "name": "Gemini",
+              "width": "fill_container",
+              "descendants": {
+                "SGJXc": {
+                  "icon": "sparkles"
+                },
+                "X3jZH0": {
+                  "content": "Gemini"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QABZc",
+      "type": "ref",
+      "ref": "hZ5Fp",
+      "name": "05 Screen · Settings · AI · Provider Menu · Dark",
+      "x": 0,
+      "y": 76719,
+      "theme": {
+        "mode": "dark"
+      }
     }
   ],
   "themes": {

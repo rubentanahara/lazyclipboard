@@ -279,6 +279,14 @@ Screens under `05 Screen ·` are `reusable`. Each has a `· Dark` instance with 
 
 Focus, recording and error states exist as components: Search Field Focus, Button Primary Focus, Row Selected Focus, Shortcut Recording, Shortcut Conflict. Every asynchronous action ships loading, error and missing-prerequisite states (AI: loading, no API key, error with retry and "Paste original"). Motion tokens exist on the canvas: `duration-fast` 100ms, `duration-base` 160ms, `duration-slow` 240ms, `ease-standard` `cubic-bezier(0.2, 0, 0, 1)`._
 
+### First run and permissions
+
+Onboarding is one window, `05 Screen · Onboarding ·` (Welcome, Permission, Shortcuts, Launch at Login, AI Key), each with a `Setup · <name>` Chip and a Footer Hint row. The chip names the step rather than counting, because the step count differs per OS. Permission is macOS Accessibility: needed, granted and revoked states; revoked appears after setup, without the chip. Windows has no permission step. Wayland Notice replaces Permission on Linux Wayland sessions and states that paste lands on the clipboard. The three paths are drawn in `06 Flow · First run · <OS> · <Mode>`: the main lane (Welcome, Shortcuts, Startup, AI key) is identical everywhere and a platform branch below it toggles with `is-macos`, `is-windows` and `is-linux`. Launch at login and local usage stats default to on and are asked once here; both live in Settings · General (Startup, Privacy). The AI Key step is skippable. No step blocks the app except permission on macOS.
+
+### Content formats
+
+A text item may carry rich text. Previews are always plain text; the Detail pane shows `Format: Rich text` and the row carries a neutral `Formatted` Chip (an optional `Format chip` in Item Row, Item Row Selected, Row Default and Row Selected, off by default; never a new icon or type). `⇧↵` pastes the plain flavour. Paste All and AI use plain text only.
+
 ### Navigation keys (Vim mode)
 
 Settings → Shortcuts → Navigation keys holds one toggle, **Vim key bindings**, **on by default**. Bindings are Ctrl-based because every panel type-to-searches, so bare `h j k l` must stay typeable. They apply on every screen (panels, Main Window, Settings). Arrow keys, Tab and Esc always work; turning Vim mode off removes only the Ctrl alternates. In text fields, Ctrl+J and Ctrl+K still move through results and nothing else is captured.
