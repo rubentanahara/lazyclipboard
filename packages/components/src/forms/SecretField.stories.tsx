@@ -26,6 +26,15 @@ export const Empty: Story = {
   },
 };
 
+export const DraftStaysOutOfTheMarkup: Story = {
+  play: async ({ canvas }) => {
+    const input = canvas.getByLabelText("Anthropic API key");
+    await userEvent.type(input, "sk-test-123");
+    await expect(input).toHaveValue("sk-test-123");
+    await expect(input.getAttribute("value")).toBeNull();
+  },
+};
+
 export const Saved: Story = {
   args: { hasSavedKey: true },
   play: async ({ canvas, canvasElement }) => {

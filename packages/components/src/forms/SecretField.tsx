@@ -1,8 +1,10 @@
 import { CircleAlert } from "lucide-react";
-import { useId, useState } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { BODY_TEXT, ERROR_TEXT, FIELD_PADDING, FIELD_SURFACE, FOCUS_RING, ICON_SIZE, SECONDARY_BUTTON, SMALL_TEXT } from "./styles";
 
 export const MASKED_PLACEHOLDER = "••••••••••••••••";
+
+const KEY_FIELD_NAME = "key";
 
 type SecretFieldProps = {
   label: string;
@@ -15,10 +17,19 @@ type SecretFieldProps = {
 
 export function SecretField({ label, hasSavedKey, onSave, saving = false, error, locked = false }: SecretFieldProps) {
   const [replacing, setReplacing] = useState(false);
-  const [draft, setDraft] = useState("");
+  const [hasDraft, setHasDraft] = useState(false);
   const inputId = useId();
   const errorId = useId();
   const showsSavedKey = hasSavedKey && !replacing && !error;
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    onSave(String(new FormData(form).get(KEY_FIELD_NAME) ?? ""));
+    form.reset();
+    setHasDraft(false);
+    setReplacing(false);
+  };
 
   if (showsSavedKey) {
     return (
@@ -38,30 +49,25 @@ export function SecretField({ label, hasSavedKey, onSave, saving = false, error,
     <div className="inline-flex flex-col gap-[var(--space-xs)]">
       <form
         className="inline-flex items-center gap-[var(--space-sm)]"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onSave(draft);
-          setDraft("");
-          setReplacing(false);
-        }}
+        onSubmit={handleSubmit}
       >
         <label htmlFor={inputId} className="sr-only">
           {label}
         </label>
         <input
           id={inputId}
+          name={KEY_FIELD_NAME}
           type="password"
           autoComplete="off"
           spellCheck={false}
           placeholder="Paste your key"
-          value={draft}
           disabled={saving || locked}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          onChange={(event) => setDraft(event.target.value)}
+          onChange={(event) => setHasDraft(event.target.value !== "")}
           className={`${BODY_TEXT} ${FIELD_SURFACE} ${FIELD_PADDING} ${FOCUS_RING} disabled:text-[color:var(--color-text-3)]`}
         />
-        <button type="submit" className={SECONDARY_BUTTON} disabled={saving || locked || draft === ""}>
+        <button type="submit" className={SECONDARY_BUTTON} disabled={saving || locked || !hasDraft}>
           {saving ? "Saving…" : "Save"}
         </button>
       </form>

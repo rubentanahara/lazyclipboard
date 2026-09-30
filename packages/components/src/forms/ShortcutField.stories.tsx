@@ -65,6 +65,14 @@ export const IgnoresKeyWithoutModifier: Story = {
   },
 };
 
+export const IgnoresShiftOnlyChord: Story = {
+  play: async ({ canvas, args }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy to group shortcut" }));
+    await userEvent.keyboard("{Shift>}a{/Shift}");
+    await expect(args.onChange).not.toHaveBeenCalled();
+  },
+};
+
 export const EscapeCancelsRecording: Story = {
   play: async ({ canvas, args }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Copy to group shortcut" }));

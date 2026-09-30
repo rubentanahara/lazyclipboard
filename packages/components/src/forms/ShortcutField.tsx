@@ -22,8 +22,8 @@ function physicalKeyName(event: KeyboardEvent): string {
   return event.key.length === 1 ? event.key.toUpperCase() : event.key;
 }
 
-function hasModifier(event: KeyboardEvent): boolean {
-  return event.ctrlKey || event.altKey || event.shiftKey || event.metaKey;
+function hasGlobalModifier(event: KeyboardEvent): boolean {
+  return event.ctrlKey || event.altKey || event.metaKey;
 }
 
 function formatChord(event: KeyboardEvent): string {
@@ -52,7 +52,7 @@ export function ShortcutField({ label, value, onChange, conflict, locked = false
       setRecording(false);
       return;
     }
-    if (MODIFIER_KEYS.has(event.key) || !hasModifier(event)) return;
+    if (MODIFIER_KEYS.has(event.key) || !hasGlobalModifier(event)) return;
     onChange(formatChord(event));
     setRecording(false);
   };
