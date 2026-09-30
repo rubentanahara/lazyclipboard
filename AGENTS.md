@@ -14,6 +14,24 @@ Use the names in `DESIGN.md`: Group, Item, Copy to group, Paste from group, Past
 
 Tauri 2 with a Rust core. Vite, React, TypeScript, Tailwind 4, Radix, Zustand. SQLite for data, OS keychain for keys. pnpm workspace, Turborepo, Cargo workspace. AI providers: Anthropic, OpenAI, Gemini, called from Rust with the user's key.
 
+## Commands
+
+Run everything through the root `Makefile`; `make help` lists the targets.
+
+| Target | Runs |
+| --- | --- |
+| `make install` | `pnpm install --frozen-lockfile` |
+| `make dev` | the Tauri app with hot reload |
+| `make build` | the Tauri app build without bundling |
+| `make lint` | clippy with `-D warnings`, `cargo fmt --check`, every package's `lint` script |
+| `make fmt` | `cargo fmt --all` |
+| `make types` | `cargo check` and every package's `types` script |
+| `make test` | `cargo test` and every package's `test` script |
+| `make check` | lint, types and tests; run it before opening a pull request |
+| `make clean` | build output |
+
+JS targets run `pnpm -r --if-present`: a package joins a target by adding a `lint`, `types` or `test` script, not by editing the `Makefile`.
+
 ## Layout and ownership
 
 One issue owns one directory, or one module path inside it named in the issue (`src-tauri/crates/os/src/<os>/<concern>`, `src-tauri/crates/core/src/<module>`, `apps/ui/src/windows/panel/<mode>`). Two open issues never share a path. Do not edit outside it; if you need a change elsewhere, open or comment on the owning issue.

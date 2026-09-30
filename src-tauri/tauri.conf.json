@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "lazyclipboard",
+  "identifier": "io.github.rubentanahara.lazyclipboard",
+  "build": {
+    "beforeDevCommand": "pnpm --filter @lazyclipboard/ui dev",
+    "beforeBuildCommand": "pnpm build:ui",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../apps/ui/dist"
+  },
+  "app": {
+    "windows": [{ "title": "lazyclipboard" }]
+  },
+  "bundle": {
+    "active": true,
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+  }
+}

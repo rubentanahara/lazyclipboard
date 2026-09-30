@@ -1,0 +1,14 @@
+{
+  "name": "lazyclipboard",
+  "private": true,
+  "packageManager": "pnpm@12.3.4",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build --no-bundle",
+    "build:ui": "turbo run build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.0",
+    "turbo": "^2.11.5"
+  }
+}
