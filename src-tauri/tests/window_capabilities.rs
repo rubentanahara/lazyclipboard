@@ -1,4 +1,6 @@
-use lazyclipboard_app::{bindings_builder, Stub};
+use std::collections::BTreeSet;
+
+use lazyclipboard_app::{bindings_builder, Stub, BINDINGS_PATH};
 use serde_json::{json, Value};
 use tauri::test::MockRuntime;
 use tauri::test::{get_ipc_response, mock_builder, INVOKE_KEY};
@@ -131,4 +133,20 @@ fn csp_blocks_remote_scripts() {
     assert_eq!(directive_sources(&policy, "default-src"), ["'self'"]);
     assert_eq!(directive_sources(&policy, "script-src"), ["'self'"]);
     assert_eq!(directive_sources(&policy, "object-src"), ["'none'"]);
+}
+
+#[test]
+fn every_registered_command_has_a_window_row() {
+    let bindings = std::fs::read_to_string(BINDINGS_PATH).expect("generated bindings");
+    let registered: BTreeSet<&str> = bindings
+        .split("TAURI_INVOKE(\"")
+        .skip(1)
+        .filter_map(|after_quote| after_quote.split('"').next())
+        .collect();
+    let listed: BTreeSet<&str> = COMMAND_WINDOWS
+        .iter()
+        .map(|(command, _)| *command)
+        .collect();
+
+    assert_eq!(registered, listed);
 }
