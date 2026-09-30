@@ -16,7 +16,7 @@ Tauri 2 with a Rust core. Vite, React, TypeScript, Tailwind 4, Radix, Zustand. S
 
 ## Layout and ownership
 
-One issue owns one directory. Do not edit outside it; if you need a change elsewhere, open or comment on the owning issue.
+One issue owns one directory, or one module path inside it named in the issue (`src-tauri/crates/os/src/<os>/<concern>`, `src-tauri/crates/core/src/<module>`, `apps/ui/src/windows/panel/<mode>`). Two open issues never share a path. Do not edit outside it; if you need a change elsewhere, open or comment on the owning issue.
 
 | Path | Owns |
 | --- | --- |
@@ -24,6 +24,9 @@ One issue owns one directory. Do not edit outside it; if you need a change elsew
 | `src-tauri/crates/os` | shortcuts, capture, paste, panel windows, tray, keychain, per OS |
 | `src-tauri/crates/ai` | provider trait and the three provider implementations |
 | `apps/ui/src/windows/<name>` | one entry per window: panel, main, settings, onboarding |
+| `apps/storybook` | Storybook config, preview, Vitest project; stories are owned by the component or window task that they sit beside |
+| `apps/ui/e2e` | Playwright config and fixtures; each spec `<window>/<story>.spec.ts` is owned by the story's UI issue |
+| `spikes/r0-*` | Sprint 0 R0 spike code per OS; deleted after the gate, proven code moves into the crates |
 | `packages/tokens` | CSS variables generated from `DESIGN.md` |
 | `packages/components` | the component library from `04 Components` |
 | `src-tauri/src`, `apps/ui/src/shared`, capability files | The Sprint 0 contracts issue only; later changes go through a comment on that issue |
@@ -37,6 +40,8 @@ The Rust to TypeScript boundary is generated types (`tauri-specta`). Change the 
 - One issue, one worktree, one branch, one pull request.
 - Every value in the UI is a token. No literal colours, no off-grid spacing, text is 12px or larger except uppercase overlines.
 - Every async action ships loading, error and missing-prerequisite states.
+- Every UI change ships a story for each design state (default, loading, error, empty, locked) and the Storybook a11y test passes.
+- Every UI story ships a Playwright spec for its keyboard flow, and the axe scan in it is clean.
 - Selection is never tint alone. Destructive controls are never icon-only.
 - No secrets in the repository, ever. Keys live in the OS keychain; signing material lives in GitHub Actions secrets.
 - Never render captured HTML in a webview. Previews are plain text.

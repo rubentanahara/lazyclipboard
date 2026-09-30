@@ -1,0 +1,101 @@
+name: project-status
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, converted_to_draft]
+  pull_request_review:
+    types: [submitted]
+  issues:
+    types: [closed]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+env:
+  PROJECT_NUMBER: "13"
+  PROJECT_OWNER: rubentanahara
+  GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+  REPO: ${{ github.repository }}
+
+jobs:
+  pull-request-status:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move linked issues
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          IS_DRAFT: ${{ github.event.pull_request.draft }}
+          PULL_REQUEST: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROJECT_TOKEN is not available (fork pull request or secret not set); skipping."
+            exit 0
+          fi
+
+          status=""
+          if [ "$EVENT_NAME" = "pull_request_review" ]; then
+            [ "$REVIEW_STATE" = "changes_requested" ] && status="In Progress"
+          elif [ "$EVENT_ACTION" = "converted_to_draft" ]; then
+            status="In Progress"
+          elif [ "$IS_DRAFT" = "true" ]; then
+            status="In Progress"
+          else
+            status="In Review"
+          fi
+          [ -z "$status" ] && exit 0
+
+          gh pr view "$PULL_REQUEST" --repo "$REPO" --json closingIssuesReferences \
+            -q '.closingIssuesReferences[].url' |
+          while read -r issue_url; do
+            [ -z "$issue_url" ] && continue
+            gh project item-edit "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" \
+              --url "$issue_url" --field Status --value "$status"
+            echo "$issue_url -> $status"
+          done
+
+  unblock-dependents:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move dependents of the closed issue from Blocked to Todo
+        env:
+          CLOSED_ISSUE: ${{ github.event.issue.number }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROJECT_TOKEN is not set; skipping."
+            exit 0
+          fi
+
+          gh issue list --repo "$REPO" --state open --label type:task \
+            --search "\"#$CLOSED_ISSUE\" in:body" --limit 100 \
+            --json number,url,body,projectItems > dependents.json
+
+          jq -c '.[]' dependents.json | while read -r dependent; do
+            number="$(jq -r .number <<<"$dependent")"
+            url="$(jq -r .url <<<"$dependent")"
+            current="$(jq -r --arg title "$PROJECT_OWNER" '[.projectItems[]? | select(.title != null) | .status.name][0] // ""' <<<"$dependent")"
+            [ "$current" = "Blocked" ] || continue
+
+            dependencies="$(jq -r .body <<<"$dependent" | tr -d '\r' |
+              awk '/^## /{keep = ($0 == "## Depends on")} keep' |
+              grep -Eo '^- #[0-9]+' | tr -d '#- ')"
+
+            all_closed=true
+            for dependency in $dependencies; do
+              state="$(gh issue view "$dependency" --repo "$REPO" --json state -q .state)"
+              [ "$state" = "CLOSED" ] || all_closed=false
+            done
+
+            if [ "$all_closed" = true ]; then
+              gh project item-edit "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" \
+                --url "$url" --field Status --value "Todo"
+              gh issue comment "$number" --repo "$REPO" \
+                --body "All dependencies are closed. Moved from Blocked to Todo."
+              echo "#$number unblocked"
+            fi
+          done

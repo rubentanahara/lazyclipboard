@@ -1,0 +1,35 @@
+name: definition-of-done
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  check-pull-request-body:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require a closing reference and ticked criteria
+        env:
+          PULL_REQUEST_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          body="$(printf '%s' "$PULL_REQUEST_BODY" | tr -d '\r')"
+
+          if ! printf '%s\n' "$body" | grep -Eiq '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+'; then
+            echo "::error::The pull request body must contain 'Closes #<issue>'."
+            exit 1
+          fi
+
+          unticked="$(printf '%s\n' "$body" | awk '
+            /^## /  { keep = tolower($0) ~ /^## (acceptance criteria|definition of done)/ }
+            keep && /^- \[ \]/ { print }
+          ')"
+
+          if [ -n "$unticked" ]; then
+            echo "::error::Unticked items under Acceptance criteria or Definition of done:"
+            printf '%s\n' "$unticked"
+            exit 1
+          fi

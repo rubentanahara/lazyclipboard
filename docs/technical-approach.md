@@ -226,6 +226,7 @@ Why the modifier wait matters: if the user still holds ⌘⌥ or Win+Shift when 
 - Build and UI: `react`, `vite`, `typescript`, `tailwindcss` v4 with `@tailwindcss/vite`, Radix primitives, `zustand`, `lucide-react` (the design spec's only icon library).
 - Font: Inter, bundled locally (for example `@fontsource/inter`). No font CDN.
 - Tests: `vitest`, `@testing-library/react`, `@testing-library/user-event`, `jsdom`, `@playwright/test`, `@axe-core/playwright`.
+- Storybook 10 in `apps/storybook`: `storybook`, `@storybook/react-vite`, `@storybook/addon-a11y`, `@storybook/addon-vitest`, `@vitest/browser-playwright`. Stories match `../../../packages/components/src/**/*.stories.@(ts|tsx)` and `../../ui/src/windows/**/*.stories.@(ts|tsx)`. `.storybook/preview.ts` imports the token CSS and the Tailwind entry, installs the C9 `mockIPC` fixture, and offers a Light and Dark toolbar toggle. Turborepo tasks: `storybook` (persistent, no cache), `build:storybook` (outputs `storybook-static/**`), `test:storybook` (`vitest --project=storybook`). Versions and install commands are checked against current docs when the harness task runs.
 
 **Tooling:** `pnpm`, `turbo`, `clippy`, `rustfmt`, `cargo-deny` (advisories and licences), and ESLint with `react/no-danger`.
 
@@ -261,7 +262,7 @@ Why the modifier wait matters: if the user still holds ⌘⌥ or Win+Shift when 
 | C6 | `AiProvider` trait, `AiError`, `classify_error(status, headers, body)` signature, recorded fixture bodies | `crates/ai` | Three provider issues in parallel |
 | C7 | CSS variable names generated from the design spec front matter (colour per mode, type, spacing, radius, elevation, motion) | `packages/tokens` | Components, windows |
 | C8 | Window labels, Vite multi-page entries, per-window capability files, CSP | `src-tauri`, `apps/ui` | Windows |
-| C9 | IPC mock harness (`mockIPC` backed by the C4 fixture) for Vitest and Playwright | `apps/ui` shared (owner: Q10) | Component and screen tests |
+| C9 | IPC mock harness (`mockIPC` backed by the C4 fixture) for Vitest, Storybook and Playwright | `apps/ui` shared (owner: Q10) | Component and screen tests |
 | C10 | CI skeleton: 3-OS build, lint and test; bindings-diff check; SHA-pinned actions; artifact size report | `.github` | Every PR |
 | C11 | Per-OS native smoke checklist template | `docs` | Every native issue |
 
@@ -316,7 +317,7 @@ Why the modifier wait matters: if the user still holds ⌘⌥ or Win+Shift when 
 | NFR-8 | Memory stability | ≤ 20 MB RSS growth after 500 panel open/close cycles | Scripted hotkey loop in the smoke run |
 | NFR-9 | Installer size | `.dmg` ≤ 20 MB (≤ 40 MB if universal), Windows installer ≤ 15 MB (WebView2 via bootstrapper), `.deb` ≤ 15 MB, AppImage ≤ 120 MB (bundles WebKitGTK; unverified, set from R0) | CI prints artifact sizes and fails over budget |
 | NFR-10 | DB performance and size | Item size: image PNG ≤ 10 MB; text limit Q5. With the 20 × 200 seed: group list ≤ 10 ms p95, search ≤ 50 ms p95, DB file ≤ 20 MB (text items averaging 2 KB) | `#[ignore]` perf test on the C4 seed, run per release |
-| NFR-11 | Accessibility | WCAG 2.2 AA (contrast already measured in the design spec); zero serious or critical axe violations per screen; every screen operable by keyboard only; text ≥ 12 px except overlines; motion off under `prefers-reduced-motion` | `@axe-core/playwright` plus keyboard-only Playwright test per screen; manual screen-reader pass per OS (scope Q16) |
+| NFR-11 | Accessibility | WCAG 2.2 AA (contrast already measured in the design spec); zero serious or critical axe violations per screen; every screen operable by keyboard only; text ≥ 12 px except overlines; motion off under `prefers-reduced-motion` | Storybook a11y test per component and screen state, `@axe-core/playwright` plus keyboard-only Playwright test per window flow; manual screen-reader pass per OS (scope Q16) |
 | NFR-12 | Offline | Every non-AI feature works with networking off. AI returns `Network` within the 10 s connect timeout (60 s total request timeout, named constants). A failed update check is silent and logged. No other connections are made | Smoke checklist with networking off; connection monitor (Little Snitch, `nettop`, Resource Monitor) during one smoke run |
 | NFR-13 | Data crash safety | Killing the process at any point leaves `PRAGMA integrity_check` = ok and no orphan image after the next start | Core test simulating a crash between the file write and the row insert; startup sweep test |
 | NFR-14 | Single instance | A second launch never creates a second process, tray icon or hotkey registration | Smoke checklist |
@@ -441,7 +442,7 @@ Numbering is proposed. ADRs 0019 to 0021 are *proposed decisions*, not yet made.
 - **ADR-0014** Local-only usage counters with export. Main alternative: opt-in remote telemetry or a crash service.
 - **ADR-0015** Tauri updater through GitHub Releases; signed and notarized macOS, unsigned Windows beta, AppImage and `.deb`. Main alternatives: app stores, Homebrew/winget only.
 - **ADR-0016** Release secrets only in a protected GitHub Actions environment. Main alternative: signing on the maintainer's machine.
-- **ADR-0017** Test strategy: unit tests, Playwright with mocked IPC, manual per-OS native smoke checklist. Main alternative: automated OS-level E2E.
+- **ADR-0017** Test strategy: unit tests, Storybook stories with a11y and interaction tests, Playwright with mocked IPC, manual per-OS native smoke checklist. Main alternative: automated OS-level E2E.
 - **ADR-0018** Rollout: all three OSes built from day 1, R0 first, validated macOS, then Windows, then Linux. Main alternative: macOS only first.
 - **ADR-0019** (proposed) Migrations with `PRAGMA user_version` and embedded SQL. Main alternatives: `rusqlite_migration`, `sqlx migrate`.
 - **ADR-0020** (proposed) No IPC command injects caller-supplied text; paste takes ids only. Main alternative: a generic `paste_text(text)`.
