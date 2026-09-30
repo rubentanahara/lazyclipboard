@@ -3,3 +3,7 @@ name = "lazyclipboard-ai"
 version = "0.0.0"
 edition = "2021"
 publish = false
+
+[dependencies]
+lazyclipboard-core = { path = "../core" }
+serde_json = "1"
