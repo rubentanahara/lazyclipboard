@@ -1,3 +1,6 @@
 *                   @rubentanahara
 /.github/           @rubentanahara
 /src-tauri/         @rubentanahara
+/pnpm-lock.yaml @rubentanahara
+/Cargo.lock @rubentanahara
+/Makefile @rubentanahara

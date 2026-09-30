@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  bindings-diff:
+    name: bindings-diff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install Linux system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+      - name: Regenerate bindings and fail on diff
+        run: |
+          if ! grep -q '^bindings:' Makefile; then
+            echo "No bindings target in Makefile yet; skipping."
+            exit 0
+          fi
+          make bindings
+          git diff --exit-code
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        if: hashFiles('apps/ui/e2e/playwright.config.ts') != ''
+        run: pnpm --filter ./apps/ui exec playwright install --with-deps chromium
+      - run: pnpm -r --if-present run test:e2e
+
+  storybook:
+    name: storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        if: hashFiles('apps/storybook/package.json') != ''
+        run: pnpm --filter ./apps/storybook exec playwright install --with-deps chromium
+      - run: pnpm -r --if-present run build:storybook
+      - run: pnpm -r --if-present run test:storybook
+
+  size-report:
+    name: size-report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:ui
+      - name: Report bundle size
+        run: |
+          {
+            echo "## UI bundle size"
+            echo '```'
+            du -sh apps/ui/dist
+            find apps/ui/dist -type f -exec du -k {} + | sort -rn | head -20
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ui-dist
+          path: apps/ui/dist
+          retention-days: 7
