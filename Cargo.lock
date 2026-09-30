@@ -1697,6 +1697,10 @@ dependencies = [
 [[package]]
 name = "lazyclipboard-ai"
 version = "0.0.0"
+dependencies = [
+ "lazyclipboard-core",
+ "serde_json",
+]
 
 [[package]]
 name = "lazyclipboard-core"
