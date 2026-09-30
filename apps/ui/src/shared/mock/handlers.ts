@@ -43,7 +43,11 @@ export const createHandlers = (): Record<string, Handler> => {
     return { ...template, id: groups.length + 1, name: String(name), position: groups.length, never_send_to_ai: false };
   };
   const done = (): null => null;
-  const whenFound = (find: (id: unknown) => unknown, key: string): Handler => (args) => (find(args[key]), null);
+  const returning = (value: unknown, find: (id: unknown) => unknown, key: string): Handler => (args) => {
+    find(args[key]);
+    return value;
+  };
+  const whenFound = (find: (id: unknown) => unknown, key: string): Handler => returning(null, find, key);
 
   return {
     groups_list: () => groups,
@@ -69,8 +73,8 @@ export const createHandlers = (): Record<string, Handler> => {
     paste_all: whenFound(group, "groupId"),
     paste_ai_result: done,
     panel_close: done,
-    ai_reformat: ({ itemId }) => (item(itemId), STUB_AI_RESULT),
-    ai_summarize: ({ groupId }) => (group(groupId), STUB_AI_RESULT),
+    ai_reformat: returning(STUB_AI_RESULT, item, "itemId"),
+    ai_summarize: returning(STUB_AI_RESULT, group, "groupId"),
     ai_key_set: done,
     ai_key_delete: done,
     ai_key_status: () => ({ anthropic: false, openai: false, gemini: false }),
