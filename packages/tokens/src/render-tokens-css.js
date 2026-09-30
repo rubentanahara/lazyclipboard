@@ -19,6 +19,8 @@ export function renderTokensCss(designMarkdown) {
     ...scaleDeclarations("space", spec.spacing),
     ...scaleDeclarations("rounded", spec.rounded),
     ...scaleDeclarations("elevation", spec.elevation),
+    ...scaleDeclarations("motion-duration", spec.motion.duration),
+    ...scaleDeclarations("motion-easing", spec.motion.easing),
   ]);
   const darkBlock = block('[data-theme="dark"]', colorDeclarations(spec.colors.dark));
 

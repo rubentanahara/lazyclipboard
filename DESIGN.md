@@ -65,6 +65,9 @@ typography:
 spacing: { 2xs: 2px, xs: 4px, sm: 8px, md: 12px, lg: 16px, xl: 24px, 2xl: 32px, 3xl: 48px }
 rounded: { sm: 6px, md: 8px, lg: 12px, xl: 14px, pill: 9999px }
 elevation: { menu-y: 12, menu-blur: 32, panel-y: 16, panel-blur: 40 }
+motion:
+  duration: { fast: 100ms, base: 160ms, slow: 240ms }
+  easing: { standard: "cubic-bezier(0.2, 0, 0, 1)" }
 ---
 
 # DESIGN.md
