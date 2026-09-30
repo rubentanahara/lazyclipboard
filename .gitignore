@@ -10,3 +10,5 @@ target/
 *.key
 *.cer
 *.mobileprovision
+
+.claude/docs/
