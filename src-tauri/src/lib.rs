@@ -60,7 +60,7 @@ pub fn bindings_builder<R: Runtime>() -> Builder<R> {
             events::SettingsChanged,
             events::PermissionChanged,
         ])
-        .types(&lazyclipboard_core::model::types())
+        .typ::<lazyclipboard_core::model::UsageMetric>()
 }
 
 pub fn export_bindings(path: &Path) -> Result<(), specta_typescript::Error> {

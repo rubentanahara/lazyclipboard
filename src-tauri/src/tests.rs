@@ -1,15 +1,13 @@
 use std::path::PathBuf;
 
-use lazyclipboard_core::model::{
-    AiError, CommandError, Group, ItemContent, ItemId, ItemPreview, Settings,
-};
+use lazyclipboard_core::model::{AiError, CommandError, Group, ItemId, ItemPreview, Settings};
 use serde::de::DeserializeOwned;
 use serde_json::{json, Value};
 use tauri::test::{get_ipc_response, mock_builder, mock_context, noop_assets, MockRuntime};
 use tauri::webview::InvokeRequest;
 use tauri::{WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 
-use crate::wire::{AiKeyStatus, AiResult, PermissionStatus, PlatformInfo};
+use crate::wire::{AiKeyStatus, AiResult, ItemView, PermissionStatus, PlatformInfo};
 use crate::{bindings_builder, export_bindings, Stub, BINDINGS_PATH};
 
 #[cfg(any(windows, target_os = "android"))]
@@ -71,17 +69,37 @@ fn items_list_returns_the_newest_items_first() {
 fn item_get_returns_typed_content_and_not_found_is_a_typed_error() {
     let webview = webview();
 
-    let content: ItemContent = call(&webview, "item_get", json!({ "id": 9 })).expect("link");
-    let missing: Result<ItemContent, CommandError> =
+    let link: ItemView = call(&webview, "item_get", json!({ "id": 9 })).expect("link");
+    let missing: Result<ItemView, CommandError> =
         call(&webview, "item_get", json!({ "id": 1_000_000 }));
 
     assert_eq!(
-        content,
-        ItemContent::Link {
+        link,
+        ItemView::Link {
             url: "https://example.com/group-0/item-8".to_owned()
         }
     );
     assert_eq!(missing, Err(CommandError::NotFound));
+}
+
+#[test]
+fn item_get_hands_rich_text_over_as_plain_text_only() {
+    let rich: ItemView = call(&webview(), "item_get", json!({ "id": 7 })).expect("rich text");
+
+    assert!(matches!(
+        rich,
+        ItemView::Text {
+            has_rich_text: true,
+            ..
+        }
+    ));
+}
+
+#[test]
+fn bindings_never_expose_item_html() {
+    let bindings = std::fs::read_to_string(PathBuf::from(BINDINGS_PATH)).expect("bindings");
+
+    assert!(!bindings.contains("html"));
 }
 
 #[test]

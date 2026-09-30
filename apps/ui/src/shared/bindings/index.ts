@@ -13,7 +13,7 @@ export const commands = {
 	groupSetNeverSendToAi: (id: GroupId, neverSendToAi: boolean) => typedError<null, CommandError>(__TAURI_INVOKE("group_set_never_send_to_ai", { id, neverSendToAi })),
 	itemsList: (groupId: GroupId) => typedError<ItemPreview[], CommandError>(__TAURI_INVOKE("items_list", { groupId })),
 	itemsSearch: (query: string) => typedError<ItemPreview[], CommandError>(__TAURI_INVOKE("items_search", { query })),
-	itemGet: (id: ItemId) => typedError<ItemContent, CommandError>(__TAURI_INVOKE("item_get", { id })),
+	itemGet: (id: ItemId) => typedError<ItemView, CommandError>(__TAURI_INVOKE("item_get", { id })),
 	itemDelete: (id: ItemId) => typedError<null, CommandError>(__TAURI_INVOKE("item_delete", { id })),
 	itemUndoDelete: (id: ItemId) => typedError<null, CommandError>(__TAURI_INVOKE("item_undo_delete", { id })),
 	captureSave: (target: CaptureTarget) => typedError<Group, CommandError>(__TAURI_INVOKE("capture_save", { target })),
@@ -95,8 +95,6 @@ export type Group = {
 
 export type GroupId = number;
 
-export type ItemContent = { kind: "text"; text: string } | { kind: "rich_text"; plain_text: string; html: string } | { kind: "link"; url: string } | { kind: "image"; file: string; width: number; height: number };
-
 export type ItemId = number;
 
 export type ItemPreview = {
@@ -105,6 +103,8 @@ export type ItemPreview = {
 	has_rich_text: boolean,
 	image_url: string | null,
 };
+
+export type ItemView = { kind: "text"; text: string; has_rich_text: boolean } | { kind: "link"; url: string } | { kind: "image"; image_url: string; width: number; height: number };
 
 export type PanelHidden = null;
 

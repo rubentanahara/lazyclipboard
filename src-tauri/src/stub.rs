@@ -1,8 +1,10 @@
 use std::sync::{Mutex, MutexGuard};
 
 use lazyclipboard_core::db::{migrate, seed};
-use lazyclipboard_core::model::{CommandError, Group, GroupId, ItemContent, ItemId, ItemPreview};
+use lazyclipboard_core::model::{CommandError, Group, GroupId, ItemId, ItemPreview};
 use rusqlite::{params, Connection, OptionalExtension, Row};
+
+use crate::wire::ItemView;
 
 const PREVIEW_COLUMNS: &str = "id, COALESCE(plain_text, ''), html IS NOT NULL, image_file";
 const NEWEST_FIRST: &str = "deleted_at IS NULL ORDER BY captured_at DESC, id DESC";
@@ -61,12 +63,12 @@ impl Stub {
         )
     }
 
-    pub fn item(&self, id: ItemId) -> Result<ItemContent, CommandError> {
+    pub fn item(&self, id: ItemId) -> Result<ItemView, CommandError> {
         self.connection()?
             .query_row(
-                "SELECT kind, COALESCE(plain_text, ''), image_file, image_width, image_height FROM items WHERE id = ?1 AND deleted_at IS NULL",
+                "SELECT kind, COALESCE(plain_text, ''), image_file, image_width, image_height, html IS NOT NULL FROM items WHERE id = ?1 AND deleted_at IS NULL",
                 [id.0],
-                content_from_row,
+                view_from_row,
             )
             .optional()
             .map_err(internal)?
@@ -113,20 +115,27 @@ fn preview_from_row(row: &Row) -> rusqlite::Result<ItemPreview> {
         id: ItemId(row.get(0)?),
         plain_text: row.get(1)?,
         has_rich_text: row.get(2)?,
-        image_url: image_file.map(|file| format!("{IMAGE_URL_PREFIX}{file}")),
+        image_url: image_file.as_deref().map(image_url),
     })
 }
 
-fn content_from_row(row: &Row) -> rusqlite::Result<ItemContent> {
+fn view_from_row(row: &Row) -> rusqlite::Result<ItemView> {
     let kind: String = row.get(0)?;
     let plain_text: String = row.get(1)?;
     Ok(match kind.as_str() {
-        "link" => ItemContent::Link { url: plain_text },
-        "image" => ItemContent::Image {
-            file: row.get(2)?,
+        "link" => ItemView::Link { url: plain_text },
+        "image" => ItemView::Image {
+            image_url: image_url(&row.get::<_, String>(2)?),
             width: row.get(3)?,
             height: row.get(4)?,
         },
-        _ => ItemContent::Text { text: plain_text },
+        _ => ItemView::Text {
+            text: plain_text,
+            has_rich_text: row.get(5)?,
+        },
     })
+}
+
+fn image_url(file: &str) -> String {
+    format!("{IMAGE_URL_PREFIX}{file}")
 }

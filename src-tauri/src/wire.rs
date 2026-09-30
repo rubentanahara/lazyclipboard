@@ -10,6 +10,23 @@ pub enum CaptureTarget {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ItemView {
+    Text {
+        text: String,
+        has_rich_text: bool,
+    },
+    Link {
+        url: String,
+    },
+    Image {
+        image_url: String,
+        width: u32,
+        height: u32,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
 pub struct CapturePreview {
     pub plain_text: String,
     pub has_rich_text: bool,

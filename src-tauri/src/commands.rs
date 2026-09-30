@@ -1,14 +1,13 @@
 #![allow(unused_variables)]
 
 use lazyclipboard_core::model::{
-    AiError, AiProvider, CommandError, Group, GroupId, ItemContent, ItemId, ItemPreview, Os,
-    Settings,
+    AiError, AiProvider, CommandError, Group, GroupId, ItemId, ItemPreview, Os, Settings,
 };
 use tauri::State;
 
 use crate::stub::Stub;
 use crate::wire::{
-    AiKeyStatus, AiResult, CaptureTarget, PasteFlavour, PasteOrder, PasteSeparator,
+    AiKeyStatus, AiResult, CaptureTarget, ItemView, PasteFlavour, PasteOrder, PasteSeparator,
     PermissionStatus, PlatformInfo, SettingsPatch, ShortcutAction, WindowKind,
 };
 
@@ -81,7 +80,7 @@ pub fn items_search(stub: State<'_, Stub>, query: String) -> CommandResult<Vec<I
 
 #[tauri::command]
 #[specta::specta]
-pub fn item_get(stub: State<'_, Stub>, id: ItemId) -> CommandResult<ItemContent> {
+pub fn item_get(stub: State<'_, Stub>, id: ItemId) -> CommandResult<ItemView> {
     stub.item(id)
 }
 
