@@ -1,4 +1,4 @@
-.PHONY: help install dev build lint fmt types test check clean
+.PHONY: help install dev build bindings lint fmt types test check clean
 
 help:
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "%-10s %s\n", $$1, $$2}'
@@ -11,6 +11,9 @@ dev: ## Run the Tauri app with hot reload
 
 build: ## Build the Tauri app without bundling
 	pnpm build
+
+bindings: ## Regenerate the TypeScript bindings from the Rust commands
+	cargo run -p lazyclipboard --bin export_bindings
 
 lint: ## Clippy with warnings as errors, rustfmt check, JS lint scripts
 	cargo clippy --workspace --all-targets -- -D warnings
