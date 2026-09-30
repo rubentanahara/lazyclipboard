@@ -48,9 +48,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
-        if: hashFiles('apps/ui/e2e/playwright.config.ts') != ''
         run: pnpm --filter ./apps/ui exec playwright install --with-deps chromium
       - run: pnpm -r --if-present run test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: e2e-traces
+          path: apps/ui/e2e/test-results
+          retention-days: 7
 
   storybook:
     name: storybook
