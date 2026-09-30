@@ -69,6 +69,18 @@ test("renders the real design spec with light and dark values that differ", () =
   assert.match(light, /--elevation-panel-blur: 40px;/);
 });
 
+test("declares every light colour in dark too", () => {
+  const css = renderTokensCss(designMarkdown);
+  const colorNames = (selector) =>
+    [...blockOf(css, selector).matchAll(/--color-([a-z0-9-]+):/g)].map(([, name]) => name);
+
+  assert.deepEqual(colorNames('[data-theme="dark"]'), colorNames(":root"));
+});
+
+test("renders a spec with Windows line endings", () => {
+  assert.equal(renderTokensCss(MINI_SPEC.replaceAll("\n", "\r\n")), MINI_CSS);
+});
+
 test("fails when the spec has no front matter", () => {
   assert.throws(() => renderTokensCss("# no front matter"), /front matter/);
 });

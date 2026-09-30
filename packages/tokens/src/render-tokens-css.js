@@ -1,6 +1,6 @@
 import { parse } from "yaml";
 
-const FRONT_MATTER = /^---\n([\s\S]*?)\n---/;
+const FRONT_MATTER = /^---\r?\n([\s\S]*?)\r?\n---/;
 const TYPOGRAPHY_PROPERTIES = {
   fontFamily: "family",
   fontSize: "size",
