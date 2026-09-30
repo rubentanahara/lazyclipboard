@@ -10070,7 +10070,12 @@
                   "type": "ref",
                   "ref": "v078W",
                   "name": "Note",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "descendants": {
+                    "X0DqY7": {
+                      "enabled": false
+                    }
+                  }
                 },
                 {
                   "id": "Kc0wB",
@@ -28485,7 +28490,7 @@
                           "content": "Privacy"
                         },
                         "iPReW": {
-                          "content": "Usage stats stay on this device. Nothing is sent anywhere."
+                          "content": "Counts and timings only, never your items. They stay on this device and are deleted when you turn this off."
                         }
                       }
                     },
@@ -43945,7 +43950,7 @@
                   "fill": "$text-2",
                   "textGrowth": "fixed-width",
                   "width": 64,
-                  "content": "P3",
+                  "content": "P2",
                   "fontFamily": "$font",
                   "fontSize": "$text-small",
                   "fontWeight": "$fw-regular"
@@ -45185,7 +45190,7 @@
                   "fill": "$text-2",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "⌘, · Tray Settings · sidebar Settings",
+                  "content": "⌘, · Tray Settings · sidebar Settings · Theme, Startup and Privacy live here",
                   "fontFamily": "$font",
                   "fontSize": "$text-small",
                   "fontWeight": "$fw-regular"
@@ -47125,7 +47130,12 @@
                   "type": "ref",
                   "ref": "v078W",
                   "name": "Note",
-                  "width": "fill_container"
+                  "width": "fill_container",
+                  "descendants": {
+                    "X0DqY7": {
+                      "enabled": false
+                    }
+                  }
                 },
                 {
                   "id": "lmYZl",
