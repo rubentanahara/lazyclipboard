@@ -116,7 +116,8 @@ Slices: R0 is the spike. P1 is the primary path (copy and paste plus onboarding 
 | Settings | Retention (200 per group, auto-delete off) | P3 | Nothing is deleted unless the user chooses. |
 | Settings | Launch at login, local usage stats toggle, Export diagnostics | P3 | Local-only stats with user control. |
 | Onboarding | Launch at login plus stats step | P3 | Asked once. |
-| Lifecycle | Tray-only, single instance, hide on close, shortcuts with no window open, updater from GitHub Releases | P3 | A utility that stays out of the way and stays current. |
+| Lifecycle | Tray-only, single instance, hide on close, shortcuts with no window open | P1 | The capture and paste loop cannot run as a real app without them. |
+| Lifecycle | Updater from GitHub Releases | P3 | Stays current; needs the release pipeline, which arrives late. |
 | AI | Provider choice (Anthropic, OpenAI, Gemini), own key in the OS keychain, default model plus Advanced override, Test connection | P4 | Optional value with user control. |
 | AI | Reformat one item with loading, error and no-key states; original never silently replaced; ⌘⇧↵ pastes original | P4 | AI trust rules. |
 | AI | Paste All AI summary with "Sends N items to <provider>", sources list and dropped items | P4 | Makes AI output checkable. |
@@ -309,7 +310,7 @@ The full engineering approach is in the Technical approach document. Summary:
 | NFR-8 | Memory stability | ≤ 20 MB growth after 500 panel open/close cycles | Scripted hotkey loop |
 | NFR-9 | Installer size | `.dmg` ≤ 20 MB (≤ 40 MB universal), Windows ≤ 15 MB, `.deb` ≤ 15 MB, AppImage ≤ 120 MB (set from R0) | CI prints sizes and fails over budget |
 | NFR-10 | DB performance and size | With 20 groups × 200 items: group list ≤ 10 ms p95, search ≤ 50 ms p95, DB ≤ 20 MB | Ignored perf test on the seed, per release |
-| NFR-11 | Accessibility | WCAG 2.2 AA; zero serious or critical axe violations per screen; keyboard-only operation | axe with Playwright plus keyboard-only test per screen; manual screen-reader pass per OS |
+| NFR-11 | Accessibility | WCAG 2.2 AA; zero serious or critical axe violations per screen; keyboard-only operation | Storybook a11y test per component and screen state, axe with Playwright plus keyboard-only test per window flow; manual screen-reader pass per OS |
 | NFR-12 | Offline | Every non-AI feature works offline; AI fails with a network error within 10 s connect and 60 s total; a failed update check is silent | Smoke run with networking off; a connection monitor |
 | NFR-13 | Data crash safety | A kill at any point leaves `PRAGMA integrity_check` ok and no orphan image after restart | Core crash-simulation test |
 | NFR-14 | Single instance | A second launch never creates a second process, tray icon or hotkey registration | Smoke checklist |
@@ -391,7 +392,6 @@ The 28 questions from the first draft were answered by the owner on 2026-09-30 a
 | 4 | Personas Tomas and Jonas rest on assumptions. | Beta issues and feedback |
 | 5 | Design gaps left for the issue that builds each screen: Linux X11 and Windows elevated-target screens, disabled states, Rename and New-group validation, Main Window search no-results and collapsed layouts, a Locked AI state in the Reformat panel, an onboarding completion screen, Vim Off keycap contrast, toast contrast, dynamic provider chip, and the Formatted chip on Search Result Row. | The owning screen issue |
 | 6 | Windows code signing after beta. | Before 1.0; apply to a free open-source signing service (verify eligibility) |
-| 7 | Sprint dates and the beta date. | Sprint grilling session |
 
 **Assumptions committed to** (a wrong one should be caught at review): recapturing an identical item in a different group creates a separate item; search matches plain and link text, not image content; Paste All leaves images out and shows the count; deleting a group has no Undo after confirmation; the interface is English only for the MVP; elevated-app paste on Windows falls back to the clipboard message; the Copy notification shows the group name and item type, not the content.
 
@@ -409,16 +409,19 @@ The 28 questions from the first draft were answered by the owner on 2026-09-30 a
 
 ### Feature Timeline and Phasing
 
-Dates are set in the sprint grilling session; the order below is fixed.
+Sprints run Monday to Sunday, one week each except Sprint 0. Capacity is 3 parallel worktrees and 45 points per sprint (XS 1, S 2, M 3, L 5), recalibrated after Sprint 1. R0 is a hard gate: no P1 issue starts until R0 passes on all three OSes. Sprint 0 may extend by at most one week, after which the owner decides the Electron switch; an extension shifts every later date by seven days.
 
 | Feature | Status | Dates |
 |---|---|---|
-| Sprint 0: scaffolding, shared contracts, CI, R0 spike (macOS, Windows, Linux) | Backlog | TBD |
-| P1: capture, paste panel, onboarding essentials, default shortcuts, lifecycle | Backlog | TBD |
-| P2: tray, search, Paste All, main window | Backlog | TBD |
-| P3: manage, settings, retention, stats, updater | Backlog | TBD |
-| P4: AI (providers, reformat, Paste All summary, Never send to AI) | Backlog | TBD |
-| Public beta and announcement | Backlog | TBD |
+| Sprint 0: scaffolding, shared contracts C1 to C11, CI, tokens, components, Storybook and e2e harnesses, R0 spike (macOS, Windows, Linux); R0 timeboxed to week 1, week 2 for fixes and the gate review | Backlog | 2026-10-05 to 2026-10-18 |
+| P1: capture, paste panel, onboarding essentials, default shortcuts, lifecycle core (Sprints 1 and 2) | Backlog | 2026-10-19 to 2026-11-01 |
+| P2: tray, search, Paste All, main window (Sprints 3 and 4) | Backlog | 2026-11-02 to 2026-11-15 |
+| P3: manage, settings, retention, stats, updater (Sprints 5 and 6); release pipeline and macOS notarization start in Sprint 5 | Backlog | 2026-11-16 to 2026-11-29 |
+| P4: AI providers, reformat, Paste All summary, Never send to AI (Sprints 7 and 8) | Backlog | 2026-11-30 to 2026-12-13 |
+| Beta hardening (Sprint 9): release, README, bug fixes; beta build ready 2026-12-20 | Backlog | 2026-12-14 to 2026-12-20 |
+| Public beta and announcement (all three OSes validated, no open `severity:blocker` issue) | Backlog | 2027-01-11 |
+
+Every sprint from Sprint 1 carries two validation stories, Windows smoke and Linux smoke, size S, run on VMs. macOS smoke runs per pull request. Bugs found become issues in the next sprint, labelled `type:bug` and `severity:blocker`, `severity:major` or `severity:minor`. Only `severity:blocker` gates the beta.
 
 ### Decision Log
 
@@ -459,6 +462,21 @@ Append only. Date, decision, why, alternatives rejected.
 | 2026-09-30 | Panel centres on the display under the cursor; ⌘1 to ⌘5 map to sidebar position; turning stats off deletes counters | Predictable; privacy-first | Focused-window display; keep counters |
 | 2026-09-30 | Screen readers in scope: VoiceOver and NVDA; Orca best effort; numeric targets confirmed; announcement waits for all three OSes; Windows unsigned through beta; R0 timebox one week, owner decides the Electron switch | Sets the accessibility bar and launch gates | Wider scope |
 | 2026-09-30 | Rollout: all three OSes built from day one; R0 first; P1 to P4; validated macOS, then Windows, then Linux | Retire platform risk before building screens | macOS only first |
+| 2026-09-30 | Backlog is one nested JSON file (epics, stories, tasks) that maps to GitHub Project 13; slugs link nodes, issue numbers are resolved on creation | Reads as the hierarchy; the creation script flattens it | A flat list with parent slugs |
+| 2026-09-30 | Fifteen capability epics (E0 to E14); a story is one user-visible behaviour with Given/When/Then; a task owns exactly one directory; the slice lives in the Priority field | Disjoint directories let tasks run in parallel worktrees | One epic per slice |
+| 2026-09-30 | Project fields: Priority (P0 to P4), Size (XS to L, larger must split), Discipline, Sprint (1-week iteration), plus Status options In Review and Blocked; labels `area:*`, `prio:*`, `type:*`, `native`, `severity:*` | One agent, one PR per task; blockers are visible | Labels only; a platform label |
+| 2026-09-30 | Sprints are one week, Monday start; Sprint 0 is two weeks (2026-10-05 to 2026-10-18); 3 worktrees, 45 points per sprint, recalibrated after Sprint 1 | R0 needs a week of results and a week for fixes and the gate | One-week Sprint 0 |
+| 2026-09-30 | R0 is a hard gate for all P1 issues; the owner decides the Electron switch at the end of Sprint 0; an extension is at most one week; tokens and components are built in Sprint 0 | Avoids building on an unproven platform; keeps worktrees busy during R0 | A soft gate with UI work against mocks |
+| 2026-09-30 | Lifecycle core (tray-only, single instance, hide on close, shortcuts with no window) is P1; the updater stays P3 | The core loop cannot run as a real app without them | Whole Lifecycle row P3; updater in P1 |
+| 2026-09-30 | Validation: macOS smoke per pull request; Windows smoke and Linux smoke stories every sprint on VMs; native checklist steps live in each issue | Per-task three-OS runs serialise everything through the owner | Per task on three OSes; per slice only |
+| 2026-09-30 | Beta includes P4; a Release and beta epic with pipeline and notarization from Sprint 5 and Beta hardening in Sprint 9; beta build 2026-12-20, announcement 2027-01-11; only `severity:blocker` gates the beta | Apple setup has lead time; the announcement promises bring-your-own-key AI | Beta without AI |
+| 2026-09-30 | An issue owns a directory or a module path inside it (`crates/os/src/<os>/<concern>`, `crates/core/src/<module>`, `windows/panel/<mode>`); native tasks are one per OS per concern; the window entry file and mode router belong to contract C8 | Whole-directory ownership would make every native and panel task collide | One issue per whole directory |
+| 2026-09-30 | Storybook 10 (`@storybook/react-vite`) in its own app `apps/storybook`; stories sit beside the component or window code and are owned by that task; every design state is a story; `@storybook/addon-a11y` and `@storybook/addon-vitest` run the stories as tests on the Linux runner (a11y `test: 'error'`); the C9 IPC mock and the token CSS load in the preview; Turborepo tasks `storybook` (persistent, uncached), `build:storybook` (outputs `storybook-static/**`) and `test:storybook`; built in CI, not published in the MVP | Design states (loading, error, no key, locked) are hard to reach in a running app; isolated, checkable states catch accessibility and interaction defects before the window e2e specs; Turborepo documents this layout | Stories inside `packages/components` only; publishing the static site now; the Storybook test-runner |
+| 2026-09-30 | With Storybook, the axe scan per component and screen state moves to Storybook; Playwright specs keep keyboard-only flows per window and one axe scan per window flow | Avoids scanning the same state twice | Both tools scan every state |
+| 2026-09-30 | UI e2e: Playwright on the Vite web build with the C9 IPC mock, one project per window, `@axe-core/playwright` scans in the same specs (fail on serious and critical); Chromium on one Linux runner per pull request; specs at `apps/ui/e2e/<window>/<story>.spec.ts` owned by the story's UI task; one harness task in Sprint 0; real-app WebDriver deferred until after beta | The risky behaviour is native and stays on the smoke checklist; `tauri-driver` has no macOS support | Real-app WebDriver e2e now; standalone axe CLI |
+| 2026-09-30 | Tests live inside each task; only the per-sprint validation stories are test-only; flow boards exist for 5 flows (Copy to Group, Paste from Group, Paste All, Manage Items and Groups, First run), each in macOS, Windows and Linux Light variants (15 boards) | Keeps tasks shippable in one pull request | Separate test tasks |
+| 2026-09-30 | Backlog JSON at `docs/backlog/sprints.json`: 15 epics, 40 stories, 130 tasks; Linux P1 native work is scheduled in Sprint 3 (macOS then Windows then Linux); Linux smoke stories start in Sprint 3, Windows smoke in Sprint 1; R0 spike code lives in `spikes/r0-*`; each slice ends with a contracts maintenance task that applies change requests to shared files | Keeps every sprint within 45 points, follows the validation order, and respects the contracts ownership rule | All OSes in one sprint; per-issue edits to shared files |
+| 2026-09-30 | Design references: light screens (about 52) plus the 5 flow boards exported to `docs/images/design/`; a story gets its screens, an epic gets its flow board; the export commit lands before issue creation | Raw GitHub links work only once the images are on `main` | All light and dark; names only |
 
 ### Change Log
 
@@ -466,6 +484,10 @@ Newest first. The body always reflects the current decision only.
 
 | Date | Change | Why |
 |---|---|---|
+| 2026-09-30 | Backlog JSON drafted and 67 design images exported (light screens plus flow boards, compressed to about 4.5 MB); Linux P1 scheduled in Sprint 3 | Sprint grilling output |
+| 2026-09-30 | Storybook added: harness task in Sprint 0, stories for every design state in the component and UI tasks, Storybook a11y tests in CI; Definition of Done, contracts C9 and C10, and the Sprint 0 goal updated | Owner request |
+| 2026-09-30 | Sprint grilling rounds 4 and 5: module-path ownership, decomposition shape (one task per OS per concern), UI e2e stack and gates, tests inside tasks | Owner review |
+| 2026-09-30 | Sprint grilling rounds 1 to 3: real sprint dates, R0 hard gate, Lifecycle row split (core P1, updater P3), validation cadence, Release and beta epic, capacity and board rules; Open Issue 7 closed | Owner review |
 | 2026-09-30 | All 28 open issues answered; requirements, Decision Log and Open Issues updated; Paste All Options moved to P2 | Owner review |
 | 2026-09-30 | First full draft merged from the product-owner, tech-lead and product-designer passes; the Technical approach document added | Sign-off preparation |
 
