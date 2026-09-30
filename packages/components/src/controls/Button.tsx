@@ -38,7 +38,6 @@ export const Button = ({
   size = "default",
   loading = false,
   disabled,
-  className = "",
   children,
   ...rest
 }: ButtonProps) => (
@@ -48,7 +47,7 @@ export const Button = ({
     disabled={disabled}
     aria-busy={loading || undefined}
     onClick={loading ? undefined : rest.onClick}
-    className={`${BASE} ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${focusRing} ${className}`}
+    className={`${BASE} ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${focusRing}`}
   >
     {loading && (
       <LoaderCircle
