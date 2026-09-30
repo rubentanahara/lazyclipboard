@@ -1,5 +1,5 @@
 import { Toast as ToastPrimitive } from "radix-ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TEXT_BODY, TEXT_SMALL } from "./type";
 
 const DEFAULT_DURATION_MS = 6000;
@@ -17,6 +17,10 @@ interface ToastProps {
 
 export function Toast({ open, onOpenChange, message, actionLabel, onAction, detail, duration = DEFAULT_DURATION_MS }: ToastProps) {
   const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    if (!open) setPaused(false);
+  }, [open]);
+
   const shownDetail = paused ? PAUSED_DETAIL : detail;
 
   return (
