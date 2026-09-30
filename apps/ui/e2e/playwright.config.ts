@@ -20,7 +20,6 @@ export default defineConfig({
     command: `pnpm exec vite build && pnpm exec vite preview --port ${PREVIEW_PORT} --strictPort`,
     cwd: "..",
     url: `${PREVIEW_URL}/src/windows/panel/index.html`,
-    reuseExistingServer: !isCi,
     timeout: 120_000,
   },
 });
