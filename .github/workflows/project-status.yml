@@ -6,7 +6,7 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [closed]
+    types: [opened, closed]
 
 permissions:
   contents: read
@@ -59,7 +59,7 @@ jobs:
           done
 
   unblock-dependents:
-    if: github.event_name == 'issues'
+    if: github.event_name == 'issues' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: Move dependents of the closed issue from Blocked to Todo
@@ -129,3 +129,44 @@ jobs:
                 --url "https://github.com/$REPO/issues/$issue" --field Status --value "Done" || true
             fi
           done
+
+  add-to-project:
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add the issue to the project and set Status, Priority and Discipline
+        env:
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROJECT_TOKEN is not set; skipping."
+            exit 0
+          fi
+
+          gh project item-add "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --url "$ISSUE_URL" >/dev/null || true
+
+          set_field() {
+            gh project item-edit "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" \
+              --url "$ISSUE_URL" --field "$1" --value "$2"
+          }
+
+          set_field Status Todo
+
+          priority="$(jq -r '[.[] | select(startswith("prio:")) | sub("prio:"; "")][0] // empty' <<<"$ISSUE_LABELS")"
+          [ -n "$priority" ] && set_field Priority "$priority"
+
+          area="$(jq -r '[.[] | select(startswith("area:")) | sub("area:"; "")][0] // empty' <<<"$ISSUE_LABELS")"
+          case "$area" in
+            rust-core) discipline="Rust-core" ;;
+            rust-os)   discipline="Rust-OS" ;;
+            rust-ai)   discipline="Rust-AI" ;;
+            ui)        discipline="UI" ;;
+            design)    discipline="Design" ;;
+            devops)    discipline="DevOps" ;;
+            docs)      discipline="Docs" ;;
+            qa)        discipline="QA" ;;
+            *)         discipline="" ;;
+          esac
+          [ -n "$discipline" ] && set_field Discipline "$discipline"
+          echo "$ISSUE_URL: Status Todo, Priority ${priority:-none}, Discipline ${discipline:-none}"
