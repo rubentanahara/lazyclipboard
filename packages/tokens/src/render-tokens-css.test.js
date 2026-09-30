@@ -17,6 +17,9 @@ typography:
 spacing: { 2xs: 2px, md: 12px }
 rounded: { sm: 6px, pill: 9999px }
 elevation: { menu-y: 12, menu-blur: 32 }
+motion:
+  duration: { fast: 100ms }
+  easing: { standard: "cubic-bezier(0.2, 0, 0, 1)" }
 ---
 
 # Body is ignored
@@ -35,6 +38,8 @@ const MINI_CSS = `:root {
   --rounded-pill: 9999px;
   --elevation-menu-y: 12px;
   --elevation-menu-blur: 32px;
+  --motion-duration-fast: 100ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
 }
 
 [data-theme="dark"] {
@@ -67,6 +72,10 @@ test("renders the real design spec with light and dark values that differ", () =
   assert.match(light, /--rounded-xl: 14px;/);
   assert.match(light, /--text-body-size: 13px;/);
   assert.match(light, /--elevation-panel-blur: 40px;/);
+  assert.match(light, /--motion-duration-fast: 100ms;/);
+  assert.match(light, /--motion-duration-base: 160ms;/);
+  assert.match(light, /--motion-duration-slow: 240ms;/);
+  assert.match(light, /--motion-easing-standard: cubic-bezier\(0\.2, 0, 0, 1\);/);
 });
 
 test("declares every light colour in dark too", () => {
