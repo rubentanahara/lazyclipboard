@@ -47,3 +47,19 @@ The Rust to TypeScript boundary is generated types (`tauri-specta`). Change the 
 - Never render captured HTML in a webview. Previews are plain text.
 - Native behaviour (global shortcut, capture, paste) cannot be unit tested; add the steps to the per-OS smoke checklist in the issue instead.
 - Code carries no comments; names say what the code does.
+
+## GitHub
+
+Values the `gh-*` skills read. Keep in sync with the repository and project settings.
+
+- Repository: rubentanahara/lazyclipboard
+- Project owner: rubentanahara
+- Project number: 13
+- Project node id: PVT_kwHOBFNXic4BlL6g
+- Default branch: main
+- Integration branch: dev
+- Pull request base: main
+- Required check: check-pull-request-body
+- Status options: Todo, In Progress, In Review, Blocked, Done
+- Project fields: Status, Priority, Size, Discipline, Sprint
+- Token secret: PROJECT_TOKEN
