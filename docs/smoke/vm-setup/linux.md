@@ -10,11 +10,16 @@ Nothing here has been run on a VM. `[unverified]` marks a detail the vendor docu
 | --- | --- | --- |
 | Ubuntu 22.04 GNOME | `ubuntu-22.04.5-desktop-amd64.iso` from releases.ubuntu.com | X11 and Wayland, from the one guest |
 | Kubuntu 22.04 KDE Plasma | `kubuntu-22.04.5-desktop-amd64.iso` from cdimage.ubuntu.com/kubuntu/releases/22.04/release/ | Plasma X11 and Plasma Wayland, from the one guest |
+| Ubuntu 26.04 GNOME | `ubuntu-26.04.1` desktop ISO from https://ubuntu.com/download/desktop, ARM64 listed | Wayland, the GlobalShortcuts path |
+| Kubuntu 26.04 KDE Plasma | `kubuntu-26.04.1-desktop-amd64.iso` from cdimage.ubuntu.com/kubuntu/releases/26.04/release/, no ARM64 desktop ISO listed | Wayland, the GlobalShortcuts path |
 
-Both desktop ISOs are amd64 only. On Apple Silicon install `ubuntu-22.04.5-live-server-arm64.iso` from cdimage.ubuntu.com/releases/22.04/release/, then run `sudo apt install ubuntu-desktop` for the GNOME guest or `sudo apt install kubuntu-desktop` for the KDE guest `[unverified: end-to-end on arm64]`.
+The 22.04 desktop ISOs are amd64 only. On Apple Silicon install `ubuntu-22.04.5-live-server-arm64.iso` from cdimage.ubuntu.com/releases/22.04/release/, then run `sudo apt install ubuntu-desktop`, then `sudo reboot`. This path is in UTM's Ubuntu guide: https://docs.getutm.app/guides/ubuntu/. The KDE equivalent, `sudo apt install kubuntu-desktop`, is `[unverified]`, and no ARM64 Kubuntu 26.04 desktop ISO is listed, so that guest has no verified path on Apple Silicon.
+
 ## Wayland global shortcut support by release
 
-Ubuntu 22.04 cannot test the Wayland global shortcut path. The GlobalShortcuts portal needs three parts: the `xdg-desktop-portal` frontend, a desktop backend, and the app. The table shows which parts each release ships. Package versions come from packages.ubuntu.com; backend presence comes from upstream release notes and source. No release below was run. The frontend gained the interface in `xdg-desktop-portal` 1.16.0 (2022-12-12). `xdg-desktop-portal-gnome` gained its backend in 48. `xdg-desktop-portal-kde` has `src/globalshortcuts.cpp` at tag v5.27.0 and not at v5.24.4.
+The spike spec asks for Wayland on GNOME and KDE Plasma, latest stable (`docs/technical-approach.md` section 1.7). 22.04 cannot run that path, so the 26.04 guests above are the rigs that can pass the Wayland block. The 22.04 Wayland sessions exercise only the fallback for a missing portal.
+
+The GlobalShortcuts portal needs three parts: the `xdg-desktop-portal` frontend, a desktop backend, and the app. The frontend gained the interface in `xdg-desktop-portal` 1.16.0 (2022-12-12). `xdg-desktop-portal-gnome` gained its backend in 48. `xdg-desktop-portal-kde` has `src/globalshortcuts.cpp` at tag v5.27.0 and not at v5.24.4. Backend presence comes from upstream release notes and source. No release was run.
 
 | Release | `xdg-desktop-portal` | GNOME backend | KDE backend | GlobalShortcuts |
 | --- | --- | --- | --- | --- |
@@ -22,19 +27,18 @@ Ubuntu 22.04 cannot test the Wayland global shortcut path. The GlobalShortcuts p
 | 24.04 | 1.18.4 | 46.0 | 5.27.11 | KDE backend present, GNOME absent |
 | 26.04 | 1.21.1 | 50.0 | 6.6.4 | GNOME and KDE backends present |
 
-On 22.04 a Wayland run exercises only the fallback path for a missing portal. For the real portal path add one of these guests, built the same way as the 22.04 guests:
-
-- Ubuntu 26.04.1 GNOME Wayland. An ARM64 desktop ISO is listed on https://ubuntu.com/download/desktop.
-- Kubuntu 26.04.1 KDE Plasma Wayland. Only an amd64 desktop ISO is listed at cdimage.ubuntu.com/kubuntu/releases/26.04/release/.
-
-The issue that owns the Wayland spike decides whether to add them. Treat this table as the reason to ask.
+The versions are from the release pocket on packages.ubuntu.com. `apt full-upgrade` can install newer point releases, so record what the guest has with `apt policy xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-kde`.
 
 ## Create the guest in UTM
 
-1. In UTM choose `+`, Virtualize, Linux `[unverified: wizard path]`. Give it 4 CPUs, 8 GB memory and a 64 GB disk.
-2. Install the distro and update it with `sudo apt update && sudo apt full-upgrade`.
-3. Do not install `spice-vdagent`. UTM documents it as required for clipboard sharing and dynamic resolution. Skipping it costs auto-resize, so set the resolution by hand. https://docs.getutm.app/guest-support/linux/
-4. Turn off clipboard sharing in the VM's UTM settings `[unverified: setting location]`.
+Follow https://docs.getutm.app/guides/ubuntu/ for the wizard (`+`, Virtualize, Linux). Give the guest 4 CPUs, 8 GB memory and a 64 GB disk.
+
+1. Install the distro. At the end of the install the reboot can leave a black screen with a blinking cursor. The guide says this is expected: quit the VM, clear the installer ISO, start it again. If the VM stops at an EFI screen, the guide lists the ISO and `FS0:` checks.
+2. If networking fails after the install, the adapter name changed. The guide edits `/etc/netplan/00-installer-config.yaml` to carry the old adapter's block over to the new name.
+3. Update with `sudo apt update && sudo apt full-upgrade`.
+4. Take the `clean-baseline` snapshot.
+5. Clipboard isolation: `ubuntu-desktop` and `kubuntu-desktop` depend on `spice-vdagent` in 22.04, which UTM documents as the guest side of clipboard sharing, so the agent is installed. Isolation rests on turning clipboard sharing off in the VM's UTM settings `[unverified: setting location]`. Rig check line 1 in `README.md` proves it.
+6. Do not enable automatic login in the installer. The keyring unlocks with the login password `[unverified]`.
 
 ## Tooling
 
@@ -45,17 +49,17 @@ sudo apt update
 sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
-Then install Rust with the rustup script from https://rustup.rs, Node LTS and pnpm, clone the repository and run `make install` and `make dev`.
-
-Apps for the blocks: Text Editor, GNOME Terminal and Firefox come with the GNOME guest. Install VS Code from Microsoft's apt repository or the `.deb`. On the KDE guest use Kate in place of Text Editor and Konsole in place of GNOME Terminal `[unverified: the template names GNOME apps only]`.
-
-Rig check tools, only for the sentinel line:
+Then install what the desktop images do not ship:
 
 ```sh
-sudo apt install xclip wl-clipboard
+sudo apt install git firefox xclip wl-clipboard
 ```
 
-Take the `ready` snapshot once per session type you test.
+Firefox on Ubuntu is a snap-backed package `[unverified]`; install it from the vendor's recommended source if `apt` refuses. Then install Rust with the rustup script from https://rustup.rs, Node LTS and pnpm, clone the repository and run `make install` and `make dev`.
+
+Apps for the blocks: Text Editor and GNOME Terminal come with the GNOME guest. Install VS Code from Microsoft's apt repository or the `.deb`. On the KDE guest use Kate in place of Text Editor and Konsole in place of GNOME Terminal `[unverified: the template names GNOME apps only]`.
+
+Take the `ready-x11` or `ready-wayland` snapshot once per session type you test. The snapshot name carries the session so a revert is unambiguous.
 
 ## Pick the session
 
@@ -73,11 +77,11 @@ Run the six lines in `README.md`, then these Linux lines:
 | --- | --- |
 | Logged in to an Xorg session | `echo $XDG_SESSION_TYPE` prints `x11` |
 | Logged in to a Wayland session | `echo $XDG_SESSION_TYPE` prints `wayland` |
-| Secret Service running | GNOME: `gnome-keyring` is installed on 22.04 and unlocks at first login. KDE: KWallet answers the Secret Service. `busctl --user list \| grep org.freedesktop.secrets` prints a name `[unverified: command output]` |
+| Secret Service running | `busctl --user list \| grep org.freedesktop.secrets` prints a name `[unverified: command output]`. The GNOME guest ships `gnome-keyring`. Kubuntu 22.04 ships KWallet from KDE Frameworks 5.92, and the Secret Service API is in the KWallet notes of Frameworks 5.97, so the KDE guest likely prints nothing. Install `gnome-keyring` there and check again `[unverified]` |
 | Tray extension active, if the issue touches the tray | GNOME: `gnome-shell-extension-appindicator` exists for 22.04. `gnome-extensions list --enabled` shows it `[unverified: enabled by default]`. KDE: the system tray shows the icon |
-| `xdg-desktop-portal` running with a GlobalShortcuts backend | `gdbus introspect --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop \| grep GlobalShortcuts` prints a match. On 22.04 it prints nothing, which is the expected result per the table above `[unverified: command output]` |
+| `xdg-desktop-portal` running with a GlobalShortcuts backend | `gdbus introspect --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop \| grep GlobalShortcuts` prints a match `[unverified: command output]`. On 22.04 it prints nothing, so the 22.04 Wayland rigs fail this line by design. Only the 26.04 guests can pass it |
 | Clipboard holds a known text sentinel | X11: `printf smoke-sentinel \| xclip -selection clipboard`, then `xclip -selection clipboard -o`. Wayland: `printf smoke-sentinel \| wl-copy`, then `wl-paste` |
 
-To test the missing-prerequisite state for the keyring, stop the keyring service in a separate snapshot and revert afterwards.
+Producing the keyring-absent state for the missing-prerequisite test is `[unverified]`. The keyring is socket and D-Bus activated, so stopping the service may not keep it absent. Confirm that the `busctl` line prints nothing before recording a missing-prerequisite result.
 
 Record the distro, version, desktop and architecture on the `Distro and desktop` line.
