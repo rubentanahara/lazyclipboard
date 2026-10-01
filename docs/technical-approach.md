@@ -55,7 +55,7 @@ Engineering companion to the PRD. Written 2026-09-30 by the tech-lead pass. `[ve
 | Items | `items_list(group_id)`, `items_search(query)`, `item_get(id)`, `item_delete(id)`, `item_undo_delete(id)` | panel, main |
 | Capture | `capture_save(target: Existing{group_id} \| New{name})`, `capture_discard()` | panel |
 | Paste | `paste_item(id, flavour: Default \| Plain)`, `paste_all(group_id, order, separator)`, `paste_ai_result(result_id)`, `panel_close()` | panel |
-| AI | `ai_reformat(item_id, prompt)` and `ai_summarize(group_id, order, separator, prompt)` both return `{result_id, text}`; `ai_key_set(provider,key)`, `ai_key_delete(provider)`, `ai_key_status()` (present or absent per provider), `ai_test_connection(provider)` | reformat and summarize: panel; keys and test: settings, onboarding |
+| AI | `ai_reformat(item_id, preset)` with `preset: ReformatPreset` (`fix_grammar`, `shorten`, `make_formal`) and `ai_summarize(group_id, order, separator, preset)` with `preset: SummaryPreset` (`summarise`) both return `{result_id, text}`; `ai_key_set(provider,key)`, `ai_key_delete(provider)`, `ai_key_status()` (present or absent per provider), `ai_test_connection(provider)` | reformat and summarize: panel; keys and test: settings, onboarding |
 | Settings | `settings_get()`, `settings_update(patch)`, `shortcut_set(action, chord)` (unregister, validate, register; returns `Conflict`) | get: all; others: settings, onboarding |
 | Platform | `platform_info()` (OS, session: x11 or wayland), `permission_status()`, `permission_open_settings()`, `window_open(kind)`, `diagnostics_export()`, `usage_clear()` | Per window, as needed |
 
@@ -84,7 +84,7 @@ A failed capture does not open the panel. Rust sends the OS notification (Notifi
 - **TC-12** Every command error MUST be a typed discriminated union (C3), so the UI can render the designed error and missing-prerequisite states.
 - **TC-13** Timing constants (1.3) MUST be named per-OS constants. They are calibration knobs tuned in R0.
 - **TC-14** Retention, soft-delete purge and usage purge MUST run at startup and on writes. There are no background timers.
-- **TC-15** AI requests MUST contain only the prompt and item plain text. Items from a group marked Never send to AI MUST be refused in Rust (`AiLocked`), not only hidden in the UI.
+- **TC-15** AI requests MUST contain only the fixed prompt for the chosen preset, selected in Rust, and item plain text. The webview sends a preset, never prompt text. Items from a group marked Never send to AI MUST be refused in Rust (`AiLocked`), not only hidden in the UI.
 - **TC-16** AI error classification MUST be a pure function `(status, headers, body) -> AiError`, following the rules and recorded bodies in the AI provider research.
 
 ### 1.2 Data model (SQLite via rusqlite, schema v1)
@@ -338,7 +338,7 @@ Why the modifier wait matters: if the user still holds ⌘⌥ or Win+Shift when 
 | T8 | Supply chain | Lockfiles committed. `cargo deny` (RustSec advisories, licences) and `pnpm audit` in CI. Actions pinned by SHA, with Dependabot for actions. Git dependencies (tauri-nspanel) pinned by commit and reviewed on bump. pnpm lifecycle scripts limited to an allowlist [verify pnpm default]. Few dependencies |
 | T9 | Fork PRs or agents reach release secrets | CI uses `pull_request`, never `pull_request_target`. Default workflow `permissions: contents: read`. Release runs only on `v*` tags in the protected `release` environment with owner approval. A tag ruleset limits `v*` to the owner. CODEOWNERS on `.github`. Secret scanning and push protection are on. Agents push branches only |
 | T10 | Over-broad OS permissions | macOS asks only for Accessibility (not Input Monitoring or Screen Recording) and uses no extra hardened-runtime entitlements unless R0 proves one is needed. Windows runs `asInvoker` and never requests admin. Linux uses no `uinput` or `input` group |
-| T11 | AI egress beyond consent | Only on explicit action. Only the prompt plus item plain text (TC-15). Never send to AI enforced in Rust. The "Sends N items" note names the provider. Gemini uses the stateless `generateContent` |
+| T11 | AI egress beyond consent | Only on explicit action. Only the fixed preset prompt plus item plain text (TC-15); no webview-supplied prompt text. Never send to AI enforced in Rust. The "Sends N items" note names the provider. Gemini uses the stateless `generateContent` |
 | T12 | OS notifications expose content | Copy notifications show group name and item type, not content (proposed) |
 
 **What is stored where**
@@ -353,7 +353,7 @@ Why the modifier wait matters: if the user still holds ⌘⌥ or Win+Shift when 
 | Clipboard snapshot, pending capture, AI result | Memory only | Dropped at the end of the sequence or on panel hide |
 
 **What leaves the device**
-- **AI request**, on explicit action only: prompt plus plain text, sent to the one configured provider, with the key in a header.
+- **AI request**, on explicit action only: the fixed preset prompt plus plain text, sent to the one configured provider, with the key in a header.
 - **Test connection**: `GET /models` to that provider.
 - **Update check**: HTTPS to GitHub Releases. It reveals IP address and app version to GitHub (Q11).
 - **Nothing else:** no telemetry, crash reports, fonts or CDNs. Usage counters leave only if the user exports them and shares the file.
