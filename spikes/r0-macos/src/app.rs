@@ -1,5 +1,6 @@
+use std::fmt::Display;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{mpsc, Mutex};
+use std::sync::{mpsc, Arc, Mutex};
 use std::thread::{sleep, spawn};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
@@ -36,7 +37,21 @@ tauri_panel! {
 struct Spike {
     timer: OpenTimer,
     target_pid: Mutex<Option<i32>>,
-    paste_running: AtomicBool,
+    paste_running: Arc<AtomicBool>,
+}
+
+struct PasteSlot(Arc<AtomicBool>);
+
+impl PasteSlot {
+    fn claim(flag: &Arc<AtomicBool>) -> Option<Self> {
+        (!flag.swap(true, Ordering::SeqCst)).then(|| Self(Arc::clone(flag)))
+    }
+}
+
+impl Drop for PasteSlot {
+    fn drop(&mut self) {
+        self.0.store(false, Ordering::SeqCst);
+    }
 }
 
 pub fn run() {
@@ -103,11 +118,14 @@ fn open_panel(app: &AppHandle) {
     };
     log("shortcut", json!({ "target_pid": target, "state": state }));
     let window = app.get_webview_window(PANEL_LABEL).expect("panel window");
-    let _ = window.center();
+    report_failure("center", window.center());
     app.get_webview_panel(PANEL_LABEL)
         .expect("panel")
         .show_and_make_key();
-    let _ = app.emit_to(PANEL_LABEL, "panel:show", state);
+    report_failure(
+        "emit panel:show",
+        app.emit_to(PANEL_LABEL, "panel:show", state),
+    );
 }
 
 #[tauri::command]
@@ -126,7 +144,7 @@ fn panel_ready(spike: State<Spike>, permission_shown: bool) {
         }),
     );
     let report = spike.timer.report();
-    if report.opens == REQUIRED_OPENS {
+    if report.opens >= REQUIRED_OPENS {
         log(
             "open_report",
             json!({
@@ -151,22 +169,22 @@ fn panel_hide(app: AppHandle) {
 
 #[tauri::command]
 fn panel_paste(app: AppHandle, spike: State<Spike>) -> Result<(), String> {
-    if spike.paste_running.swap(true, Ordering::SeqCst) {
+    let Some(slot) = PasteSlot::claim(&spike.paste_running) else {
         return Ok(());
-    }
+    };
     if !accessibility::is_trusted() {
-        spike.paste_running.store(false, Ordering::SeqCst);
         log("paste_blocked", json!({ "reason": "accessibility" }));
         return Err("Accessibility permission is needed to paste".to_owned());
     }
     spawn(move || {
-        let outcome = paste_sequence(&app);
-        if let Err(reason) = &outcome {
+        let _slot = slot;
+        if let Err(reason) = paste_sequence(&app) {
             log("paste_failed", json!({ "reason": reason }));
+            report_failure(
+                "emit paste:failed",
+                app.emit_to(PANEL_LABEL, "paste:failed", reason),
+            );
         }
-        app.state::<Spike>()
-            .paste_running
-            .store(false, Ordering::SeqCst);
     });
     Ok(())
 }
@@ -177,7 +195,12 @@ fn open_accessibility_settings() -> Result<(), String> {
 }
 
 fn paste_sequence(app: &AppHandle) -> Result<(), String> {
+    objc2::rc::autoreleasepool(|_| paste_steps(app))
+}
+
+fn paste_steps(app: &AppHandle) -> Result<(), String> {
     let entered = Instant::now();
+    let target = *app.state::<Spike>().target_pid.lock().expect("target lock");
     let keycode = on_main_thread(app, layout::paste_keycode)??;
     let prior = pasteboard::snapshot();
     let written = pasteboard::write_transient_text(SENTINEL);
@@ -186,7 +209,10 @@ fn paste_sequence(app: &AppHandle) -> Result<(), String> {
     on_main_thread(app, move || hide_panel(&hiding_app))?;
     let modifiers_released = keys::wait_modifiers_released(MODIFIER_RELEASE_TIMEOUT);
     sleep(FOCUS_SETTLE_DELAY);
-    keys::post_command_chord(keycode);
+    if frontmost_pid() != target {
+        return Err("the target app lost focus before the paste".to_owned());
+    }
+    keys::post_command_chord(keycode)?;
     log(
         "paste_posted",
         json!({
@@ -203,6 +229,15 @@ fn paste_sequence(app: &AppHandle) -> Result<(), String> {
         json!({ "restored": restored, "restore_delay_ms": restore_delay().as_millis() as u64 }),
     );
     Ok(())
+}
+
+fn report_failure(step: &str, result: Result<(), impl Display>) {
+    if let Err(error) = result {
+        log(
+            "step_failed",
+            json!({ "step": step, "error": error.to_string() }),
+        );
+    }
 }
 
 fn restore_delay() -> Duration {

@@ -1,1 +1,4 @@
 gen/
+*.log
+*.png
+!icons/icon.png

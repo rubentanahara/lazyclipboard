@@ -26,9 +26,12 @@ let eventSource = CGEventSource(stateID: .hidSystemState)
 var allowedFrontmostPids: Set<pid_t> = []
 
 var runningSpike: Spike?
+var activeTargets: [Target] = []
 
 func fail(_ message: String) -> Never {
     FileHandle.standardError.write(Data("abort: \(message)\n".utf8))
+    CGEvent(keyboardEventSource: eventSource, virtualKey: KeyCode.shift, keyDown: false)?.post(tap: .cghidEventTap)
+    activeTargets.forEach { $0.cleanup() }
     runningSpike?.stop()
     exit(2)
 }
@@ -211,30 +214,32 @@ func activate(_ pid: pid_t) {
 final class TextEditTarget: Target {
     let name = "TextEdit"
     var pid: pid_t = 0
+    private(set) var documentName = ""
     private var wasRunning = false
+
+    var windowSelector: String { "(first window whose name is \"\(documentName)\")" }
 
     func prepare() {
         wasRunning = !NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.TextEdit").isEmpty
-        appleScript("tell application \"TextEdit\" to activate")
+        documentName = appleScript("tell application \"TextEdit\"\nactivate\nset created to make new document\nreturn name of created\nend tell")
         pid = applicationPid(bundleIdentifier: "com.apple.TextEdit")
-        appleScript("tell application \"TextEdit\" to if (count of documents) = 0 then make new document")
         activate(pid)
         allowedFrontmostPids = [pid]
     }
 
     func resetLine() {
-        appleScript("tell application \"TextEdit\" to set text of document 1 to \"\(initialLine)\"")
+        appleScript("tell application \"TextEdit\" to set text of document \"\(documentName)\" to \"\(initialLine)\"")
         activate(pid)
         tapKey(KeyCode.up, flags: .maskCommand)
         for _ in 0..<caretOffset { tapKey(KeyCode.right) }
     }
 
     func content() -> String {
-        appleScript("tell application \"TextEdit\" to get text of document 1")
+        appleScript("tell application \"TextEdit\" to get text of document \"\(documentName)\"")
     }
 
     func cleanup() {
-        appleScript("tell application \"TextEdit\" to close document 1 saving no")
+        appleScript("tell application \"TextEdit\" to close document \"\(documentName)\" saving no")
         if !wasRunning { appleScript("tell application \"TextEdit\" to quit") }
     }
 }
@@ -334,15 +339,42 @@ func makeTarget(_ name: String) -> Target {
     }
 }
 
+func begin(_ target: Target) {
+    target.prepare()
+    activeTargets.append(target)
+}
+
+func finish(_ target: Target) {
+    target.cleanup()
+    activeTargets.removeAll { $0.name == target.name }
+}
+
+enum Scenario: String {
+    case full, shift, image, layout, fullscreen, permission
+
+    var shiftHeld: Bool { self == .shift }
+    var imagePrior: Bool { self == .image }
+    var keyChecks: Bool { self == .full }
+
+    var expectedKeys: [String] {
+        (keyChecks ? expectedPanelKeys : []) + (shiftHeld ? ["Shift", "Enter"] : ["Enter"])
+    }
+}
+
+struct Session {
+    let spike: Spike
+    let target: Target
+
+    func record(_ criterion: String, _ passed: Bool, _ detail: @autoclosure () -> String) {
+        pendingRecords.append(("\(criterion) \(target.name)", passed, passed ? "" : detail()))
+    }
+}
+
 let discardLimit = 8
 var tallies: [String: (passed: Int, runs: Int)] = [:]
 var failureDetails: [String] = []
 var pendingRecords: [(key: String, passed: Bool, detail: String)] = []
 var discardedIterations = 0
-
-func record(_ criterion: String, _ target: String, _ passed: Bool, _ detail: @autoclosure () -> String) {
-    pendingRecords.append(("\(criterion) \(target)", passed, passed ? "" : detail()))
-}
 
 func commitIteration() {
     for result in pendingRecords {
@@ -364,7 +396,7 @@ func foreignInputSeen(spike: Spike, since mark: Int, expectedKeys: [String]) -> 
     return keys.count > expectedKeys.count || !Set(keys).isSubset(of: Set(expectedKeys))
 }
 
-func settle(spike: Spike) {
+func settle() {
     usleep(500_000)
     tapKey(KeyCode.escape)
     usleep(500_000)
@@ -381,82 +413,84 @@ func printSummary() {
     for detail in failureDetails { print("FAIL \(detail)") }
 }
 
-func openPanel(spike: Spike, target: Target) -> LoggedEvent? {
-    activate(target.pid)
-    let mark = spike.events().count
+func openPanel(_ session: Session) -> LoggedEvent? {
+    activate(session.target.pid)
+    let mark = session.spike.events().count
     pressShortcut()
-    return spike.wait(for: "panel_ready", after: mark)
+    return session.spike.wait(for: "panel_ready", after: mark)
 }
 
-func checkOpenedWithoutLeak(spike: Spike, target: Target, iteration: Int) {
-    guard let ready = openPanel(spike: spike, target: target) else {
-        record("R0-1 opens", target.name, false, "no panel_ready on iteration \(iteration)")
+func checkOpenedWithoutLeak(_ session: Session, iteration: Int) {
+    let target = session.target
+    guard let ready = openPanel(session) else {
+        session.record("R0-1 opens", false, "no panel_ready on iteration \(iteration)")
         return
     }
-    record("R0-1 opens", target.name, true, "")
+    session.record("R0-1 opens", true, "")
     usleep(200_000)
     let strict = ready.frontmostPid == target.pid && frontmostPid() == target.pid
-    record("R0-3 strict focus while open", target.name, strict, "frontmost \(String(describing: ready.frontmostPid)) then \(String(describing: frontmostPid())) expected \(target.pid)")
+    session.record("R0-3 strict focus while open", strict, "frontmost \(String(describing: ready.frontmostPid)) then \(String(describing: frontmostPid())) expected \(target.pid)")
     let leaked = target.content()
-    record("R0-1 no chord character leaks", target.name, leaked == initialLine, "content \(leaked.debugDescription)")
+    session.record("R0-1 no chord character leaks", leaked == initialLine, "content \(leaked.debugDescription)")
 }
 
-func checkPanelKeys(spike: Spike, target: Target) {
-    let mark = spike.events().count
+func checkPanelKeys(_ session: Session) {
+    let mark = session.spike.events().count
     tapKey(KeyCode.a)
     tapKey(KeyCode.b)
     tapKey(KeyCode.down)
     tapKey(KeyCode.up)
     tapKey(KeyCode.escape)
-    let hidden = spike.wait(for: "panel_hidden", after: mark)
-    let received = spike.events().dropFirst(mark).filter { $0.name == "panel_key" }.compactMap { $0.fields["key"] as? String }
-    record("R0-2 panel receives keys", target.name, received == expectedPanelKeys && hidden != nil, "received \(received)")
-    record("R0-3 strict focus after hide", target.name, frontmostPid() == target.pid, "frontmost \(String(describing: frontmostPid()))")
+    let hidden = session.spike.wait(for: "panel_hidden", after: mark)
+    let received = session.spike.events().dropFirst(mark).filter { $0.name == "panel_key" }.compactMap { $0.fields["key"] as? String }
+    session.record("R0-2 panel receives keys", received == expectedPanelKeys && hidden != nil, "received \(received)")
+    session.record("R0-3 strict focus after hide", frontmostPid() == session.target.pid, "frontmost \(String(describing: frontmostPid()))")
 }
 
-func checkPaste(spike: Spike, target: Target, iteration: Int, shiftHeld: Bool, imagePrior: Bool) {
-    imagePrior ? setPriorImage() : setPriorText("prior-\(iteration)")
+func pressEnter() {
+    tapKey(KeyCode.returnKey)
+}
+
+func pressEnterWhileShiftIsHeld() {
+    postKey(KeyCode.shift, down: true, flags: .maskShift)
+    usleep(20_000)
+    postKey(KeyCode.returnKey, down: true, flags: .maskShift)
+    postKey(KeyCode.returnKey, down: false, flags: .maskShift)
+    usleep(300_000)
+    postKey(KeyCode.shift, down: false)
+}
+
+func checkPaste(_ session: Session, iteration: Int, scenario: Scenario) {
+    scenario.imagePrior ? setPriorImage() : setPriorText("prior-\(iteration)")
     let prior = pasteboardFlavours()
-    guard openPanel(spike: spike, target: target) != nil else {
-        record("R0-4 paste", target.name, false, "panel did not open on iteration \(iteration)")
+    guard openPanel(session) != nil else {
+        session.record("R0-4 paste", false, "panel did not open on iteration \(iteration)")
         return
     }
-    let mark = spike.events().count
-    if shiftHeld {
-        postKey(KeyCode.shift, down: true, flags: .maskShift)
-        usleep(20_000)
-        postKey(KeyCode.returnKey, down: true, flags: .maskShift)
-        postKey(KeyCode.returnKey, down: false, flags: .maskShift)
-        usleep(300_000)
-        postKey(KeyCode.shift, down: false)
-    } else {
-        tapKey(KeyCode.returnKey)
-    }
-    let done = spike.wait(for: "paste_done", after: mark, timeout: 5)
+    let mark = session.spike.events().count
+    scenario.shiftHeld ? pressEnterWhileShiftIsHeld() : pressEnter()
+    let done = session.spike.wait(for: "paste_done", after: mark, timeout: 5)
     usleep(150_000)
-    let label = shiftHeld ? "R0-8 paste with shift held" : "R0-4 paste at original caret"
-    let pasted = target.content()
-    record(label, target.name, done != nil && pasted == expectedAfterPaste, "content \(pasted.debugDescription)")
-    let restored = pasteboardFlavours() == prior
-    record(imagePrior ? "R0-5 image restored" : "R0-5 text restored", target.name, restored, "clipboard differs from prior")
+    let pasted = session.target.content()
+    session.record(scenario.shiftHeld ? "R0-8 paste with shift held" : "R0-4 paste at original caret", done != nil && pasted == expectedAfterPaste, "content \(pasted.debugDescription)")
+    session.record(scenario.imagePrior ? "R0-5 image restored" : "R0-5 text restored", pasteboardFlavours() == prior, "clipboard differs from prior")
 }
 
-func runChecks(spike: Spike, target: Target, iterations: Int, shiftHeld: Bool, imagePrior: Bool, keyChecks: Bool) {
-    let expectedKeys = (keyChecks ? expectedPanelKeys : []) + (shiftHeld ? ["Shift", "Enter"] : ["Enter"])
+func runChecks(_ session: Session, scenario: Scenario, iterations: Int) {
     for iteration in 1...iterations {
         var disturbed = false
         repeat {
-            let mark = spike.events().count
-            target.resetLine()
-            if keyChecks {
-                checkOpenedWithoutLeak(spike: spike, target: target, iteration: iteration)
-                checkPanelKeys(spike: spike, target: target)
+            let mark = session.spike.events().count
+            session.target.resetLine()
+            if scenario.keyChecks {
+                checkOpenedWithoutLeak(session, iteration: iteration)
+                checkPanelKeys(session)
             }
-            checkPaste(spike: spike, target: target, iteration: iteration, shiftHeld: shiftHeld, imagePrior: imagePrior)
-            disturbed = foreignInputSeen(spike: spike, since: mark, expectedKeys: expectedKeys)
+            checkPaste(session, iteration: iteration, scenario: scenario)
+            disturbed = foreignInputSeen(spike: session.spike, since: mark, expectedKeys: scenario.expectedKeys)
             if disturbed {
                 discardIteration()
-                settle(spike: spike)
+                settle()
             } else {
                 commitIteration()
             }
@@ -464,35 +498,36 @@ func runChecks(spike: Spike, target: Target, iterations: Int, shiftHeld: Bool, i
     }
 }
 
+func setFullScreen(_ enabled: Bool, target: TextEditTarget) {
+    appleScript("tell application \"System Events\" to tell process \"TextEdit\" to set value of attribute \"AXFullScreen\" of \(target.windowSelector) to \(enabled)")
+}
+
+func isFullScreen(_ target: TextEditTarget) -> Bool {
+    appleScript("tell application \"System Events\" to tell process \"TextEdit\" to get value of attribute \"AXFullScreen\" of \(target.windowSelector)") == "true"
+}
+
 func fullscreenChecks(spike: Spike, iterations: Int) {
     let target = TextEditTarget()
-    target.prepare()
-    setTextEditFullScreen(true)
+    let session = Session(spike: spike, target: target)
+    begin(target)
+    setFullScreen(true, target: target)
     sleep(2)
-    let isFullscreen = appleScript("tell application \"System Events\" to tell process \"TextEdit\" to get value of attribute \"AXFullScreen\" of \(textEditDocumentWindow)")
-    if isFullscreen != "true" { fail("TextEdit did not enter a fullscreen Space, AXFullScreen is \(isFullscreen)") }
+    if !isFullScreen(target) { fail("TextEdit did not enter a fullscreen Space") }
     for iteration in 1...iterations {
-        guard let ready = openPanel(spike: spike, target: target) else {
-            record("R0-7 panel over fullscreen", target.name, false, "no panel_ready on iteration \(iteration)")
+        guard let ready = openPanel(session) else {
+            session.record("R0-7 panel over fullscreen", false, "no panel_ready on iteration \(iteration)")
             continue
         }
         usleep(300_000)
-        let spikePid = spike.pid
         shell("/usr/sbin/screencapture", ["-x", spike.logURL.deletingLastPathComponent().appendingPathComponent("fullscreen-\(iteration).png").path])
-        let onScreen = panelIsOnScreen(ownerPid: spikePid)
-        record("R0-7 panel over fullscreen", target.name, onScreen && ready.frontmostPid == target.pid, "onscreen \(onScreen) frontmost \(String(describing: ready.frontmostPid))")
+        let onScreen = panelIsOnScreen(ownerPid: spike.pid)
+        session.record("R0-7 panel over fullscreen", onScreen && ready.frontmostPid == target.pid, "onscreen \(onScreen) frontmost \(String(describing: ready.frontmostPid))")
         tapKey(KeyCode.escape)
         usleep(300_000)
     }
-    setTextEditFullScreen(false)
+    setFullScreen(false, target: target)
     sleep(2)
-    target.cleanup()
-}
-
-let textEditDocumentWindow = "(first window whose subrole is \"AXStandardWindow\")"
-
-func setTextEditFullScreen(_ enabled: Bool) {
-    appleScript("tell application \"System Events\" to tell process \"TextEdit\" to set value of attribute \"AXFullScreen\" of \(textEditDocumentWindow) to \(enabled)")
+    finish(target)
 }
 
 func panelIsOnScreen(ownerPid: pid_t) -> Bool {
@@ -502,24 +537,25 @@ func panelIsOnScreen(ownerPid: pid_t) -> Bool {
 
 func permissionChecks(spike: Spike, iterations: Int) {
     let target = TextEditTarget()
-    target.prepare()
+    let session = Session(spike: spike, target: target)
+    begin(target)
     target.resetLine()
     let startedUntrusted = spike.events().first { $0.name == "started" }?.fields["accessibility_trusted"] as? Bool == false
-    record("R0-9 app starts without Accessibility", target.name, startedUntrusted, "app reports trusted")
+    session.record("R0-9 app starts without Accessibility", startedUntrusted, "app reports trusted")
     for _ in 1...iterations {
-        guard let ready = openPanel(spike: spike, target: target) else {
-            record("R0-9 permission state shown", target.name, false, "no panel_ready")
+        guard let ready = openPanel(session) else {
+            session.record("R0-9 permission state shown", false, "no panel_ready")
             continue
         }
-        record("R0-9 permission state shown", target.name, ready.fields["permission_shown"] as? Bool == true, "permission section hidden")
+        session.record("R0-9 permission state shown", ready.fields["permission_shown"] as? Bool == true, "permission section hidden")
         let mark = spike.events().count
-        tapKey(KeyCode.returnKey)
+        pressEnter()
         let blocked = spike.wait(for: "paste_blocked", after: mark)
-        record("R0-9 paste refused with a reason", target.name, blocked != nil, "no paste_blocked event")
+        session.record("R0-9 paste refused with a reason", blocked != nil, "no paste_blocked event")
         tapKey(KeyCode.escape)
         usleep(300_000)
     }
-    target.cleanup()
+    finish(target)
 }
 
 func p95Summary(spike: Spike) {
@@ -535,26 +571,27 @@ guard arguments.count >= 5 else {
 }
 let spike = Spike(executable: arguments[1], logURL: URL(fileURLWithPath: arguments[2]))
 runningSpike = spike
-defer { spike.stop() }
 _ = waitUntil(timeout: 10) { spike.events().contains { $0.name == "started" } }
-let scenario = arguments[3]
+guard let scenario = Scenario(rawValue: arguments[3]) else {
+    fail("unknown scenario \(arguments[3])")
+}
 let targetName = arguments[4]
 let iterations = arguments.count > 5 ? Int(arguments[5])! : 20
-print("layout \(currentLayoutName()) scenario \(scenario) target \(targetName) iterations \(iterations)")
+print("layout \(currentLayoutName()) scenario \(scenario.rawValue) target \(targetName) iterations \(iterations)")
 appleScript("display notification \"R0 smoke run in progress, keep hands off the keyboard and mouse\" with title \"lazyclipboard R0\"")
 
 switch scenario {
-case "full", "shift", "image", "layout":
+case .full, .shift, .image, .layout:
     let target = makeTarget(targetName)
-    target.prepare()
-    runChecks(spike: spike, target: target, iterations: iterations, shiftHeld: scenario == "shift", imagePrior: scenario == "image", keyChecks: scenario == "full")
-    target.cleanup()
-case "fullscreen":
+    begin(target)
+    runChecks(Session(spike: spike, target: target), scenario: scenario, iterations: iterations)
+    finish(target)
+case .fullscreen:
     fullscreenChecks(spike: spike, iterations: iterations)
-case "permission":
+case .permission:
     permissionChecks(spike: spike, iterations: iterations)
-default:
-    fail("unknown scenario \(scenario)")
 }
 printSummary()
 p95Summary(spike: spike)
+spike.stop()
+exit(failureDetails.isEmpty ? 0 : 1)

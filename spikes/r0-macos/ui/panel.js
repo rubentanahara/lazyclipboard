@@ -10,6 +10,7 @@ let selected = 0;
 function select(index) {
   selected = (index + rows.length) % rows.length;
   rows.forEach((row, rowIndex) => row.setAttribute("aria-selected", String(rowIndex === selected)));
+  search.setAttribute("aria-activedescendant", rows[selected].id);
 }
 
 function paste() {
@@ -29,10 +30,11 @@ listen("panel:show", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  invoke("panel_key", { key: event.key.length === 1 ? "Character" : event.key });
+  if (event.isComposing) return;
+  invoke("panel_key", { key: [...event.key].length === 1 ? "Character" : event.key });
   if (event.key === "Escape") {
     invoke("panel_hide");
-  } else if (event.key === "Enter") {
+  } else if (event.key === "Enter" && !event.repeat && !(event.target instanceof HTMLButtonElement)) {
     paste();
   } else if (event.key === "ArrowDown") {
     event.preventDefault();
@@ -41,6 +43,10 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     select(selected - 1);
   }
+});
+
+listen("paste:failed", (event) => {
+  status.textContent = String(event.payload);
 });
 
 document.getElementById("open-settings").addEventListener("click", () => {

@@ -2,6 +2,7 @@ import json
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+MAX_BODY_BYTES = 4096
 INITIAL_VALUE = "AAABBB"
 CARET_OFFSET = 3
 
@@ -38,21 +39,38 @@ class State:
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if not self.host_is_local():
+            return
         if self.path == "/state":
             self.reply("application/json", json.dumps(State.latest))
         else:
             self.reply("text/html", PAGE)
 
     def do_POST(self):
+        if not self.host_is_local():
+            return
         length = int(self.headers.get("Content-Length", 0))
+        if not 0 <= length <= MAX_BODY_BYTES:
+            self.send_error(413)
+            return
         body = self.rfile.read(length)
         if self.path == "/report":
-            State.latest = json.loads(body)
+            try:
+                State.latest = json.loads(body)
+            except json.JSONDecodeError:
+                self.send_error(400)
+                return
             reset, State.reset_requested = State.reset_requested, False
             self.reply("application/json", json.dumps({"reset": reset}))
         elif self.path == "/reset":
             State.reset_requested = True
             self.reply("application/json", "{}")
+
+    def host_is_local(self):
+        if self.headers.get("Host", "").startswith(f"127.0.0.1:{self.server.server_port}"):
+            return True
+        self.send_error(403)
+        return False
 
     def reply(self, content_type, body):
         payload = body.encode()

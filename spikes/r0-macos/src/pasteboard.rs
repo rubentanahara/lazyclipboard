@@ -1,6 +1,9 @@
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2_app_kit::{NSPasteboard, NSPasteboardItem, NSPasteboardTypeString, NSPasteboardWriting};
+use objc2_app_kit::{
+    NSPasteboard, NSPasteboardContentsOptions, NSPasteboardItem, NSPasteboardTypeString,
+    NSPasteboardWriting,
+};
 use objc2_foundation::{NSArray, NSData, NSString};
 
 const TRANSIENT_TYPE: &str = "org.nspasteboard.TransientType";
@@ -97,7 +100,7 @@ fn write_items(items: &[Retained<NSPasteboardItem>]) -> isize {
         .iter()
         .map(|item| ProtocolObject::<dyn NSPasteboardWriting>::from_retained(item.clone()))
         .collect();
-    pasteboard.clearContents();
+    pasteboard.prepareForNewContentsWithOptions(NSPasteboardContentsOptions::CurrentHostOnly);
     pasteboard.writeObjects(&NSArray::from_retained_slice(&writers));
     pasteboard.changeCount()
 }

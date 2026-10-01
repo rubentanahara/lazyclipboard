@@ -17,10 +17,10 @@ Grant Accessibility to the terminal that runs it. A launch from Finder or `open`
 ```sh
 cargo build --release
 swiftc -O driver/r0-driver.swift -o target/r0-driver
-target/r0-driver target/release/r0-macos run.log full TextEdit 25
+target/r0-driver target/release/r0-macos target/run.log full TextEdit 25
 ```
 
-Scenarios: `full` (R0-1 to R0-5), `shift` (R0-8 with ⇧ held), `image` (R0-5 image), `layout` (paste under the current input source), `fullscreen` (R0-7, TextEdit only), `permission` (R0-9). Targets: `TextEdit`, `Terminal`, `Safari`. Safari is served a textarea page by `driver/textarea_server.py`.
+Scenarios: `full` (R0-1 to R0-5), `shift` (R0-8 with ⇧ held), `image` (R0-5 image), `layout` (paste under the current input source; use TextEdit or Safari, Terminal types with fixed ANSI keycodes), `fullscreen` (R0-7, TextEdit only), `permission` (R0-9). Targets: `TextEdit`, `Terminal`, `Safari`. Safari is served a textarea page by `driver/textarea_server.py`. The driver creates its own TextEdit document, Terminal window and Safari window and closes only those. Exit code is 1 when a check fails, 2 on abort.
 
 `permission` needs an app without an Accessibility grant: run `driver/bundle.sh` and pass `target/r0-macos.app` as the binary.
 
