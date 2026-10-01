@@ -10,15 +10,16 @@ use tauri::{AppHandle, Emitter, Manager, State, WebviewWindow};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutEvent, ShortcutState};
 
 use crate::config::{Config, FocusMode};
-use crate::win32::{self, Target};
+use crate::describe;
+use crate::win32::{self, ClipboardSnapshot, Target};
 
 const PANEL_LABEL: &str = "panel";
 const PANEL_SHOWN_EVENT: &str = "panel-shown";
 const LOG_FILE_NAME: &str = "lazyclipboard-r0-windows.log";
 const CONFIG_ERROR_EXIT_CODE: i32 = 2;
 const MODIFIER_RELEASE_TIMEOUT: Duration = Duration::from_millis(1000);
-const FOCUS_RETURN_TIMEOUT: Duration = Duration::from_millis(500);
-const FOCUS_RETURN_POLL_INTERVAL: Duration = Duration::from_millis(5);
+const STATE_CHANGE_TIMEOUT: Duration = Duration::from_millis(500);
+const STATE_POLL_INTERVAL: Duration = Duration::from_millis(5);
 
 struct Spike {
     config: Config,
@@ -57,7 +58,9 @@ pub fn run() {
             let panel = app
                 .get_webview_window(PANEL_LABEL)
                 .ok_or("panel window is missing")?;
-            win32::set_panel_style(panel.hwnd()?.0 as isize, spike.config.focus_mode);
+            if spike.config.focus_mode == FocusMode::NoActivate {
+                panel.set_focusable(false)?;
+            }
             app.global_shortcut()
                 .register(spike.config.shortcut.as_str())
                 .inspect_err(|error| {
@@ -87,7 +90,6 @@ fn on_shortcut(app: &AppHandle, _shortcut: &Shortcut, event: ShortcutEvent) {
         return;
     }
     let spike = app.state::<Spike>();
-    spike.timer.shortcut_fired();
     let Some(panel) = app.get_webview_window(PANEL_LABEL) else {
         log("shortcut fired but the panel window is missing");
         return;
@@ -98,32 +100,22 @@ fn on_shortcut(app: &AppHandle, _shortcut: &Shortcut, event: ShortcutEvent) {
 }
 
 fn toggle_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
-    if panel.is_visible().map_err(|error| error.to_string())? {
+    if panel.is_visible().map_err(describe)? {
         return close_panel(panel, spike);
     }
+    spike.timer.shortcut_fired();
     open_panel(panel, spike)
 }
 
 fn open_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
-    let target = win32::foreground_target();
-    log(&format!(
-        "shortcut target_hwnd={:?} blocked_by_uipi={:?}",
-        target.map(|target| target.hwnd),
-        target.map(|target| target.blocked_by_uipi),
-    ));
-    *spike.target() = target;
-    let panel_hwnd = panel.hwnd().map_err(|error| error.to_string())?.0 as isize;
-    panel.center().map_err(|error| error.to_string())?;
-    match spike.config.focus_mode {
-        FocusMode::Activate => {
-            panel.show().map_err(|error| error.to_string())?;
-            panel.set_focus().map_err(|error| error.to_string())?;
-        }
-        FocusMode::NoActivate => win32::show_without_activating(panel_hwnd)?,
+    *spike.target() = win32::foreground_target();
+    panel.center().map_err(describe)?;
+    panel.show().map_err(describe)?;
+    win32::add_tool_window_style(panel_hwnd(panel)?)?;
+    if spike.config.focus_mode == FocusMode::Activate {
+        panel.set_focus().map_err(describe)?;
     }
-    panel
-        .emit(PANEL_SHOWN_EVENT, ())
-        .map_err(|error| error.to_string())
+    panel.emit(PANEL_SHOWN_EVENT, ()).map_err(describe)
 }
 
 #[tauri::command]
@@ -132,15 +124,15 @@ fn panel_ready(panel: WebviewWindow, spike: State<Spike>) {
         log("first-frame ack without a pending shortcut");
         return;
     };
-    let foreground_is_target = spike
-        .target()
-        .is_some_and(|target| target.hwnd == win32::foreground_hwnd());
-    let panel_is_foreground = panel
-        .hwnd()
-        .is_ok_and(|hwnd| hwnd.0 as isize == win32::foreground_hwnd());
+    let target = *spike.target();
+    let foreground = win32::foreground_hwnd();
+    let panel_is_foreground = panel_hwnd(&panel).is_ok_and(|hwnd| hwnd == foreground);
     log(&format!(
-        "open ready_ms={:.1} foreground_is_target={foreground_is_target} panel_is_foreground={panel_is_foreground} {}",
+        "open ready_ms={:.1} target_hwnd={:?} blocked_by_uipi={:?} foreground_is_target={} panel_is_foreground={panel_is_foreground} {}",
         elapsed.as_secs_f64() * 1000.0,
+        target.map(|target| target.hwnd),
+        target.map(|target| target.blocked_by_uipi),
+        target.is_some_and(|target| target.hwnd == foreground),
         spike.timer.report(),
     ));
 }
@@ -160,12 +152,13 @@ async fn paste(panel: WebviewWindow, spike: State<'_, Spike>, text: String) -> R
 }
 
 fn paste_sequence(panel: &WebviewWindow, spike: &Spike, text: &str) -> Result<(), String> {
+    let owner = panel_hwnd(panel)?;
     let target = claim_target(spike)?;
-    let snapshot = win32::snapshot_clipboard()?;
-    log(&format!("snapshot {}", snapshot.describe()));
-    let written_sequence = win32::write_text(text)?;
+    let (snapshot, written_sequence) = write_sentinel(owner, text).inspect_err(|_| {
+        *spike.target() = Some(target);
+    })?;
     let pasted = inject_paste(panel, spike, target);
-    let restored = restore_if_unchanged(&snapshot, written_sequence);
+    let restored = restore_if_unchanged(owner, &snapshot, written_sequence);
     pasted.and(restored)
 }
 
@@ -182,36 +175,55 @@ fn claim_target(spike: &Spike) -> Result<Target, String> {
     Ok(target)
 }
 
+fn write_sentinel(owner: isize, text: &str) -> Result<(ClipboardSnapshot, u32), String> {
+    let snapshot = win32::snapshot_clipboard()?;
+    log(&format!("snapshot {}", snapshot.describe()));
+    match win32::write_text(owner, text) {
+        Ok(sequence) => Ok((snapshot, sequence)),
+        Err(error) => {
+            let _ = restore_if_unchanged(owner, &snapshot, win32::clipboard_sequence());
+            Err(error)
+        }
+    }
+}
+
 fn inject_paste(panel: &WebviewWindow, spike: &Spike, target: Target) -> Result<(), String> {
     hide_and_return_focus(panel, spike, target)?;
-    let modifiers_released = win32::wait_modifiers_released(MODIFIER_RELEASE_TIMEOUT);
+    if !win32::wait_modifiers_released(MODIFIER_RELEASE_TIMEOUT) {
+        return Err("a modifier is still held, paste cancelled".to_owned());
+    }
     sleep(spike.config.focus_settle);
     if win32::foreground_hwnd() != target.hwnd {
         return Err("target is not in front, paste cancelled".to_owned());
     }
     win32::send_paste_chord(target.hwnd)?;
-    log(&format!("pasted modifiers_released={modifiers_released}"));
+    log("pasted");
     sleep(spike.config.restore_delay);
     Ok(())
 }
 
 fn restore_if_unchanged(
-    snapshot: &win32::ClipboardSnapshot,
+    owner: isize,
+    snapshot: &ClipboardSnapshot,
     written_sequence: u32,
 ) -> Result<(), String> {
-    if win32::restore_clipboard(snapshot, written_sequence)? {
-        log("clipboard restored");
-    } else {
-        log("clipboard changed by another process, not restoring");
+    match win32::restore_clipboard(owner, snapshot, written_sequence) {
+        Ok(true) => log("clipboard restored"),
+        Ok(false) => log("clipboard changed by another process, not restoring"),
+        Err(error) => {
+            log(&format!("clipboard restore failed: {error}"));
+            return Err(error);
+        }
     }
     Ok(())
 }
 
 fn close_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
     let target = spike.target().take();
+    let panel_in_front = panel_hwnd(panel)? == win32::foreground_hwnd();
     match target {
-        Some(target) => hide_and_return_focus(panel, spike, target),
-        None => panel.hide().map_err(|error| error.to_string()),
+        Some(target) if panel_in_front => hide_and_return_focus(panel, spike, target),
+        _ => panel.hide().map_err(describe),
     }
 }
 
@@ -221,11 +233,14 @@ fn hide_and_return_focus(
     target: Target,
 ) -> Result<(), String> {
     let hidden_at = Instant::now();
-    panel.hide().map_err(|error| error.to_string())?;
+    panel.hide().map_err(describe)?;
+    if !wait_until(|| !panel.is_visible().is_ok_and(|visible| visible)) {
+        log("panel still visible after hide");
+    }
     if spike.config.focus_mode == FocusMode::Activate && !win32::activate(target.hwnd) {
         log("SetForegroundWindow(target) was refused");
     }
-    let returned = wait_for_foreground(target.hwnd);
+    let returned = wait_until(|| win32::foreground_hwnd() == target.hwnd);
     log(&format!(
         "hide focus_returned={returned} focus_return_ms={:.1}",
         hidden_at.elapsed().as_secs_f64() * 1000.0,
@@ -233,15 +248,19 @@ fn hide_and_return_focus(
     Ok(())
 }
 
-fn wait_for_foreground(hwnd: isize) -> bool {
-    let deadline = Instant::now() + FOCUS_RETURN_TIMEOUT;
-    while win32::foreground_hwnd() != hwnd {
+fn wait_until(condition: impl Fn() -> bool) -> bool {
+    let deadline = Instant::now() + STATE_CHANGE_TIMEOUT;
+    while !condition() {
         if Instant::now() >= deadline {
             return false;
         }
-        sleep(FOCUS_RETURN_POLL_INTERVAL);
+        sleep(STATE_POLL_INTERVAL);
     }
     true
+}
+
+fn panel_hwnd(panel: &WebviewWindow) -> Result<isize, String> {
+    panel.hwnd().map(|hwnd| hwnd.0 as isize).map_err(describe)
 }
 
 fn log_path() -> PathBuf {

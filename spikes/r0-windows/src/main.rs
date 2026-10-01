@@ -8,6 +8,11 @@ mod config;
 mod win32;
 
 #[cfg(windows)]
+fn describe(error: impl std::fmt::Display) -> String {
+    error.to_string()
+}
+
+#[cfg(windows)]
 fn main() {
     app::run();
 }

@@ -29,11 +29,11 @@ use windows::Win32::UI::Input::KeyboardAndMouse::{
 };
 use windows::Win32::UI::WindowsAndMessaging::{
     GetForegroundWindow, GetWindowLongPtrW, GetWindowThreadProcessId, IsWindow,
-    SetForegroundWindow, SetWindowLongPtrW, SetWindowPos, ShowWindow, GWL_EXSTYLE, HWND_TOPMOST,
-    SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SW_SHOWNOACTIVATE, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+    SetForegroundWindow, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, SWP_FRAMECHANGED,
+    SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, WS_EX_TOOLWINDOW,
 };
 
-use crate::config::FocusMode;
+use crate::describe;
 
 const CLIPBOARD_OPEN_ATTEMPTS: u32 = 20;
 const CLIPBOARD_OPEN_RETRY_INTERVAL: Duration = Duration::from_millis(10);
@@ -93,30 +93,22 @@ pub fn activate(hwnd: isize) -> bool {
     unsafe { SetForegroundWindow(hwnd_of(hwnd)) }.as_bool()
 }
 
-pub fn set_panel_style(hwnd: isize, focus_mode: FocusMode) {
+pub fn add_tool_window_style(hwnd: isize) -> Result<(), String> {
     let hwnd = hwnd_of(hwnd);
-    let mut style = unsafe { GetWindowLongPtrW(hwnd, GWL_EXSTYLE) } | WS_EX_TOOLWINDOW.0 as isize;
-    if focus_mode == FocusMode::NoActivate {
-        style |= WS_EX_NOACTIVATE.0 as isize;
-    }
+    let style = unsafe { GetWindowLongPtrW(hwnd, GWL_EXSTYLE) } | WS_EX_TOOLWINDOW.0 as isize;
     unsafe { SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style) };
-}
-
-pub fn show_without_activating(hwnd: isize) -> Result<(), String> {
-    let hwnd = hwnd_of(hwnd);
-    let _ = unsafe { ShowWindow(hwnd, SW_SHOWNOACTIVATE) };
     unsafe {
         SetWindowPos(
             hwnd,
-            Some(HWND_TOPMOST),
+            None,
             0,
             0,
             0,
             0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE,
+            SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE,
         )
     }
-    .map_err(|error| error.to_string())
+    .map_err(describe)
 }
 
 pub fn wait_modifiers_released(timeout: Duration) -> bool {
@@ -154,7 +146,7 @@ pub fn clipboard_sequence() -> u32 {
 }
 
 pub fn snapshot_clipboard() -> Result<ClipboardSnapshot, String> {
-    let _open = OpenClipboardGuard::acquire()?;
+    let _open = OpenClipboardGuard::acquire(None)?;
     let mut formats = Vec::new();
     let mut skipped = Vec::new();
     let mut format = unsafe { EnumClipboardFormats(0) };
@@ -171,10 +163,10 @@ pub fn snapshot_clipboard() -> Result<ClipboardSnapshot, String> {
     Ok(ClipboardSnapshot { formats, skipped })
 }
 
-pub fn write_text(text: &str) -> Result<u32, String> {
+pub fn write_text(owner: isize, text: &str) -> Result<u32, String> {
     {
-        let _open = OpenClipboardGuard::acquire()?;
-        unsafe { EmptyClipboard() }.map_err(|error| error.to_string())?;
+        let _open = OpenClipboardGuard::acquire(Some(owner))?;
+        unsafe { EmptyClipboard() }.map_err(describe)?;
         let utf16_with_terminator: Vec<u8> = text
             .encode_utf16()
             .chain(once(0))
@@ -193,14 +185,15 @@ pub fn write_text(text: &str) -> Result<u32, String> {
 }
 
 pub fn restore_clipboard(
+    owner: isize,
     snapshot: &ClipboardSnapshot,
     expected_sequence: u32,
 ) -> Result<bool, String> {
-    let _open = OpenClipboardGuard::acquire()?;
+    let _open = OpenClipboardGuard::acquire(Some(owner))?;
     if clipboard_sequence() != expected_sequence {
         return Ok(false);
     }
-    unsafe { EmptyClipboard() }.map_err(|error| error.to_string())?;
+    unsafe { EmptyClipboard() }.map_err(describe)?;
     let failures: Vec<String> = snapshot
         .formats
         .iter()
@@ -306,8 +299,7 @@ fn read_format(format: u32) -> Option<Vec<u8>> {
 }
 
 fn put_format(format: u32, bytes: &[u8]) -> Result<(), String> {
-    let memory =
-        unsafe { GlobalAlloc(GMEM_MOVEABLE, bytes.len()) }.map_err(|error| error.to_string())?;
+    let memory = unsafe { GlobalAlloc(GMEM_MOVEABLE, bytes.len()) }.map_err(describe)?;
     let destination = unsafe { GlobalLock(memory) };
     if destination.is_null() {
         let _ = unsafe { GlobalFree(Some(memory)) };
@@ -319,7 +311,7 @@ fn put_format(format: u32, bytes: &[u8]) -> Result<(), String> {
     }
     if let Err(error) = unsafe { SetClipboardData(format, Some(HANDLE(memory.0))) } {
         let _ = unsafe { GlobalFree(Some(memory)) };
-        return Err(error.to_string());
+        return Err(describe(error));
     }
     Ok(())
 }
@@ -327,9 +319,9 @@ fn put_format(format: u32, bytes: &[u8]) -> Result<(), String> {
 struct OpenClipboardGuard;
 
 impl OpenClipboardGuard {
-    fn acquire() -> Result<Self, String> {
+    fn acquire(owner: Option<isize>) -> Result<Self, String> {
         for _ in 0..CLIPBOARD_OPEN_ATTEMPTS {
-            if unsafe { OpenClipboard(None) }.is_ok() {
+            if unsafe { OpenClipboard(owner.map(hwnd_of)) }.is_ok() {
                 return Ok(Self);
             }
             sleep(CLIPBOARD_OPEN_RETRY_INTERVAL);

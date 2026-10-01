@@ -20,7 +20,7 @@ The app has no visible window until the shortcut fires. Default chord: Win+Alt+V
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `R0_SHORTCUT` | `Super+Alt+V` | Chord to register (for example when another app owns Win+Alt+V) |
-| `R0_FOCUS` | `activate` | `activate`: panel takes focus, target is re-activated on hide. `noactivate`: `WS_EX_NOACTIVATE`, the panel never takes focus (R1) |
+| `R0_FOCUS` | `activate` | `activate`: panel takes focus, target is re-activated on hide. `noactivate`: the panel is not focusable (`WS_EX_NOACTIVATE` through Tauri `set_focusable(false)`) and never takes keyboard focus (R1) |
 | `R0_FOCUS_SETTLE_MS` | `50` | Wait between returning focus and injecting Ctrl+V |
 | `R0_RESTORE_DELAY_MS` | `250` | Wait between injecting Ctrl+V and restoring the clipboard |
 
@@ -30,9 +30,16 @@ Example: `set R0_FOCUS=noactivate && cargo run --release`.
 
 Every event goes to `%TEMP%\lazyclipboard-r0-windows.log` (one line per event, epoch milliseconds first):
 
-- `shortcut target_hwnd=… blocked_by_uipi=…`: the app that was in front, and whether it runs elevated above the spike.
-- `open ready_ms=… foreground_is_target=… panel_is_foreground=… shortcut_to_panel_ready opens=N p95=… max=… budget=… PASS|FAIL|TOO FEW OPENS`: shortcut to first frame (R0-6), reported by `spikes/r0-common`. `foreground_is_target=true` while the panel is open is Strict focus (R0-3); `panel_is_foreground=true` means the panel took keyboard focus.
+- `open ready_ms=… target_hwnd=… blocked_by_uipi=… foreground_is_target=… panel_is_foreground=… shortcut_to_panel_ready opens=N p95=… max=… budget=… PASS|FAIL|TOO FEW OPENS`: one line per open, written after the first-frame ack so logging is not in the measured time. `ready_ms` is shortcut to first frame (R0-6), and the `shortcut_to_panel_ready` part is the running report from `spikes/r0-common`. `target_hwnd` is the app that was in front and `blocked_by_uipi=Some(true)` means it runs elevated above the spike. `foreground_is_target=true` while the panel is open is Strict focus (R0-3); `panel_is_foreground=true` means the panel took keyboard focus.
 - `hide focus_returned=… focus_return_ms=…`: time from hide until the target is foreground again (R0-3 Acceptable is ≤ 100 ms).
 - `snapshot formats(id,bytes)=… skipped=…`: clipboard formats captured before the paste; `skipped` lists formats that are not copied: handle-based and private formats, and any format that could not be read. After copying an image, `2` (CF_BITMAP) and `9` (CF_PALETTE) are expected because Windows synthesizes them from the copied formats.
-- `pasted modifiers_released=…`: `false` means a modifier was still held after 1000 ms. If the target is not in front when the chord would be injected, the paste is cancelled with `target is not in front` and the clipboard is restored.
+- `pasted`: Ctrl+V was injected. The paste is cancelled, and the clipboard restored, when a modifier is still held after 1000 ms (`a modifier is still held`) or the target is not in front (`target is not in front`).
 - `clipboard restored` or `clipboard changed by another process, not restoring`.
+
+## Known limits of the spike
+
+- The timer is one running report for the whole process: the cold first open and every open made while testing other steps count. Restart the app before the 50-open run (R0-6) and make the first open a warm-up that you discard by restarting after it, or count only the 50 opens after a restart.
+- The panel is centred on the monitor it was created on, not on the monitor of the target app. Test on one monitor.
+- The snapshot reads every clipboard format before the panel hides. Delay-rendered formats (large Excel or Word copies) can make that slow; record it if ↵ to text visible is over 300 ms for such a clipboard.
+- `WS_EX_TOOLWINDOW` is set after each show. Record whether the panel appears in Alt+Tab.
+- The panel has no hide-on-blur. Closing it with the shortcut while another window is in front hides it without returning focus.
