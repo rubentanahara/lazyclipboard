@@ -5,11 +5,11 @@ use std::sync::{Mutex, MutexGuard, PoisonError};
 use std::thread::sleep;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
+use r0_common::OpenTimer;
 use tauri::{AppHandle, Emitter, Manager, State, WebviewWindow};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutEvent, ShortcutState};
 
 use crate::config::{Config, FocusMode};
-use crate::open_timer::OpenTimer;
 use crate::win32::{self, Target};
 
 const PANEL_LABEL: &str = "panel";
@@ -48,7 +48,7 @@ pub fn run() {
         )
         .manage(Spike {
             config,
-            timer: OpenTimer::default(),
+            timer: OpenTimer::new(),
             target: Mutex::new(None),
         })
         .invoke_handler(tauri::generate_handler![panel_ready, panel_hide, paste])
@@ -141,7 +141,7 @@ fn panel_ready(panel: WebviewWindow, spike: State<Spike>) {
     log(&format!(
         "open ready_ms={:.1} foreground_is_target={foreground_is_target} panel_is_foreground={panel_is_foreground} {}",
         elapsed.as_secs_f64() * 1000.0,
-        spike.timer.summary(),
+        spike.timer.report(),
     ));
 }
 
@@ -160,29 +160,50 @@ async fn paste(panel: WebviewWindow, spike: State<'_, Spike>, text: String) -> R
 }
 
 fn paste_sequence(panel: &WebviewWindow, spike: &Spike, text: &str) -> Result<(), String> {
-    let target = (*spike.target()).ok_or("no target window was recorded")?;
+    let target = claim_target(spike)?;
+    let snapshot = win32::snapshot_clipboard()?;
+    log(&format!("snapshot {}", snapshot.describe()));
+    let written_sequence = win32::write_text(text)?;
+    let pasted = inject_paste(panel, spike, target);
+    let restored = restore_if_unchanged(&snapshot, written_sequence);
+    pasted.and(restored)
+}
+
+fn claim_target(spike: &Spike) -> Result<Target, String> {
+    let mut slot = spike.target();
+    let target = (*slot).ok_or("no target window was recorded")?;
     if target.blocked_by_uipi {
         return Err("target runs as administrator, paste is blocked by UIPI".to_owned());
     }
     if !win32::is_window(target.hwnd) {
         return Err("target window is gone".to_owned());
     }
-    let snapshot = win32::snapshot_clipboard()?;
-    log(&format!("snapshot {}", snapshot.describe()));
-    let written_sequence = win32::write_text(text)?;
-    spike.target().take();
+    *slot = None;
+    Ok(target)
+}
+
+fn inject_paste(panel: &WebviewWindow, spike: &Spike, target: Target) -> Result<(), String> {
     hide_and_return_focus(panel, spike, target)?;
     let modifiers_released = win32::wait_modifiers_released(MODIFIER_RELEASE_TIMEOUT);
     sleep(spike.config.focus_settle);
+    if win32::foreground_hwnd() != target.hwnd {
+        return Err("target is not in front, paste cancelled".to_owned());
+    }
     win32::send_paste_chord(target.hwnd)?;
     log(&format!("pasted modifiers_released={modifiers_released}"));
     sleep(spike.config.restore_delay);
-    if win32::clipboard_sequence() != written_sequence {
+    Ok(())
+}
+
+fn restore_if_unchanged(
+    snapshot: &win32::ClipboardSnapshot,
+    written_sequence: u32,
+) -> Result<(), String> {
+    if win32::restore_clipboard(snapshot, written_sequence)? {
+        log("clipboard restored");
+    } else {
         log("clipboard changed by another process, not restoring");
-        return Ok(());
     }
-    win32::restore_clipboard(&snapshot)?;
-    log("clipboard restored");
     Ok(())
 }
 

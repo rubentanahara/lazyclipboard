@@ -4,7 +4,6 @@
 #[cfg(windows)]
 mod app;
 mod config;
-mod open_timer;
 #[cfg(windows)]
 mod win32;
 

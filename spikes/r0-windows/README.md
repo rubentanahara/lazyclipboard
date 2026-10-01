@@ -31,8 +31,8 @@ Example: `set R0_FOCUS=noactivate && cargo run --release`.
 Every event goes to `%TEMP%\lazyclipboard-r0-windows.log` (one line per event, epoch milliseconds first):
 
 - `shortcut target_hwnd=… blocked_by_uipi=…`: the app that was in front, and whether it runs elevated above the spike.
-- `open ready_ms=… foreground_is_target=… opens=N p95_ms=… PASS|FAIL|INCOMPLETE`: shortcut to first frame (R0-6). `foreground_is_target=true` while the panel is open is Strict focus (R0-3).
+- `open ready_ms=… foreground_is_target=… panel_is_foreground=… shortcut_to_panel_ready opens=N p95=… max=… budget=… PASS|FAIL|TOO FEW OPENS`: shortcut to first frame (R0-6), reported by `spikes/r0-common`. `foreground_is_target=true` while the panel is open is Strict focus (R0-3); `panel_is_foreground=true` means the panel took keyboard focus.
 - `hide focus_returned=… focus_return_ms=…`: time from hide until the target is foreground again (R0-3 Acceptable is ≤ 100 ms).
-- `snapshot formats(id,bytes)=… skipped=…`: clipboard formats captured before the paste; `skipped` lists formats that could not be copied.
-- `pasted modifiers_released=…`: `false` means a modifier was still held after 1000 ms.
+- `snapshot formats(id,bytes)=… skipped=…`: clipboard formats captured before the paste; `skipped` lists formats that are not copied: handle-based and private formats, and any format that could not be read. After copying an image, `2` (CF_BITMAP) and `9` (CF_PALETTE) are expected because Windows synthesizes them from the copied formats.
+- `pasted modifiers_released=…`: `false` means a modifier was still held after 1000 ms. If the target is not in front when the chord would be injected, the paste is cancelled with `target is not in front` and the clipboard is restored.
 - `clipboard restored` or `clipboard changed by another process, not restoring`.

@@ -5,11 +5,12 @@ use std::ops::RangeInclusive;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
+use windows::core::{w, PCWSTR};
 use windows::Win32::Foundation::{CloseHandle, GlobalFree, HANDLE, HGLOBAL, HWND};
 use windows::Win32::Security::{GetTokenInformation, TokenElevation, TOKEN_ELEVATION, TOKEN_QUERY};
 use windows::Win32::System::DataExchange::{
     CloseClipboard, EmptyClipboard, EnumClipboardFormats, GetClipboardData,
-    GetClipboardSequenceNumber, OpenClipboard, SetClipboardData,
+    GetClipboardSequenceNumber, OpenClipboard, RegisterClipboardFormatW, SetClipboardData,
 };
 use windows::Win32::System::Memory::{
     GlobalAlloc, GlobalLock, GlobalSize, GlobalUnlock, GMEM_MOVEABLE,
@@ -38,7 +39,14 @@ const CLIPBOARD_OPEN_ATTEMPTS: u32 = 20;
 const CLIPBOARD_OPEN_RETRY_INTERVAL: Duration = Duration::from_millis(10);
 const MODIFIER_POLL_INTERVAL: Duration = Duration::from_millis(10);
 const MODIFIER_KEYS: [VIRTUAL_KEY; 5] = [VK_SHIFT, VK_CONTROL, VK_MENU, VK_LWIN, VK_RWIN];
+const PRIVATE_FORMATS: RangeInclusive<u32> = 0x0200..=0x02FF;
 const GDI_OBJECT_FORMATS: RangeInclusive<u32> = 0x0300..=0x03FF;
+const CLIPBOARD_PRIVACY_MARKERS: [PCWSTR; 3] = [
+    w!("ExcludeClipboardContentFromMonitorProcessing"),
+    w!("CanIncludeInClipboardHistory"),
+    w!("CanUploadToCloudClipboard"),
+];
+const CLIPBOARD_PRIVACY_MARKER_VALUE: [u8; 4] = 0u32.to_le_bytes();
 
 #[derive(Debug, Clone, Copy)]
 pub struct Target {
@@ -151,11 +159,12 @@ pub fn snapshot_clipboard() -> Result<ClipboardSnapshot, String> {
     let mut skipped = Vec::new();
     let mut format = unsafe { EnumClipboardFormats(0) };
     while format != 0 {
-        if holds_global_memory(format) {
-            match read_format(format) {
-                Some(bytes) => formats.push((format, bytes)),
-                None => skipped.push(format),
-            }
+        match holds_global_memory(format)
+            .then(|| read_format(format))
+            .flatten()
+        {
+            Some(bytes) => formats.push((format, bytes)),
+            None => skipped.push(format),
         }
         format = unsafe { EnumClipboardFormats(format) };
     }
@@ -172,12 +181,25 @@ pub fn write_text(text: &str) -> Result<u32, String> {
             .flat_map(u16::to_le_bytes)
             .collect();
         put_format(CF_UNICODETEXT.0 as u32, &utf16_with_terminator)?;
+        for marker in CLIPBOARD_PRIVACY_MARKERS {
+            let format = unsafe { RegisterClipboardFormatW(marker) };
+            if format == 0 {
+                return Err("RegisterClipboardFormatW failed".to_owned());
+            }
+            put_format(format, &CLIPBOARD_PRIVACY_MARKER_VALUE)?;
+        }
     }
     Ok(clipboard_sequence())
 }
 
-pub fn restore_clipboard(snapshot: &ClipboardSnapshot) -> Result<(), String> {
+pub fn restore_clipboard(
+    snapshot: &ClipboardSnapshot,
+    expected_sequence: u32,
+) -> Result<bool, String> {
     let _open = OpenClipboardGuard::acquire()?;
+    if clipboard_sequence() != expected_sequence {
+        return Ok(false);
+    }
     unsafe { EmptyClipboard() }.map_err(|error| error.to_string())?;
     let failures: Vec<String> = snapshot
         .formats
@@ -189,7 +211,7 @@ pub fn restore_clipboard(snapshot: &ClipboardSnapshot) -> Result<(), String> {
         })
         .collect();
     if failures.is_empty() {
-        return Ok(());
+        return Ok(true);
     }
     Err(format!("restore failed for {}", failures.join("; ")))
 }
@@ -265,7 +287,9 @@ fn holds_global_memory(format: u32) -> bool {
         CF_DSPENHMETAFILE.0,
     ]
     .map(u32::from);
-    !handle_formats.contains(&format) && !GDI_OBJECT_FORMATS.contains(&format)
+    !handle_formats.contains(&format)
+        && !PRIVATE_FORMATS.contains(&format)
+        && !GDI_OBJECT_FORMATS.contains(&format)
 }
 
 fn read_format(format: u32) -> Option<Vec<u8>> {

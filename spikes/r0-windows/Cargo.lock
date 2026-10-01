@@ -2433,9 +2433,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
 
 [[package]]
+name = "r0-common"
+version = "0.0.0"
+
+[[package]]
 name = "r0-windows"
 version = "0.0.0"
 dependencies = [
+ "r0-common",
  "tauri",
  "tauri-build",
  "tauri-plugin-global-shortcut",

@@ -6,6 +6,9 @@ publish = false
 
 [workspace]
 
+[dependencies]
+r0-common = { path = "../r0-common" }
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
