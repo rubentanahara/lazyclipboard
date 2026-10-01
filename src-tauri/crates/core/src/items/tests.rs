@@ -253,6 +253,36 @@ fn an_image_wins_over_text_and_formatted_html() {
     ));
 }
 
+const PALETTE_NOT_A_MULTIPLE_OF_THREE: &[u8] =
+    include_bytes!("fixtures/png_palette_length_not_multiple_of_three.png");
+const HEADER_DECLARING_A_PETABYTE_BUFFER: &[u8] =
+    include_bytes!("fixtures/png_header_declares_petabyte_pixel_buffer.png");
+
+#[test]
+fn crafted_pngs_are_skipped_and_counted_and_the_text_flavour_is_kept() {
+    for crafted in [
+        PALETTE_NOT_A_MULTIPLE_OF_THREE,
+        HEADER_DECLARING_A_PETABYTE_BUFFER,
+    ] {
+        let classified = classify(Flavours {
+            plain_text: Some("caption".to_owned()),
+            png: Some(crafted.to_vec()),
+            ..Flavours::default()
+        })
+        .unwrap();
+
+        assert_eq!(
+            classified,
+            Classified {
+                item: Some(PendingItem::Text {
+                    text: "caption".to_owned()
+                }),
+                skipped_images: 1,
+            }
+        );
+    }
+}
+
 const INCOMPRESSIBLE_SIDE: u32 = 1800;
 
 fn incompressible_png() -> Vec<u8> {
