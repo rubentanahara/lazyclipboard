@@ -5703,7 +5703,7 @@
           "tasks": [
             {
               "id": "E12.S1.T1",
-              "title": "AI prompts: four presets and Custom, default prompt text",
+              "title": "AI prompts: four fixed presets, no Custom, default prompt text",
               "labels": [
                 "type:task",
                 "area:rust-ai",
