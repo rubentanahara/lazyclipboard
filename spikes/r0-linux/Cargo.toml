@@ -16,6 +16,6 @@ tauri-build = { version = "2", features = [] }
 clipboard-rs = "0.3"
 lazyclipboard-core = { path = "../../src-tauri/crates/core" }
 lazyclipboard-os = { path = "../../src-tauri/crates/os" }
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["custom-protocol"] }
 tauri-plugin-global-shortcut = "2"
 x11rb = { version = "0.14", features = ["xtest"] }

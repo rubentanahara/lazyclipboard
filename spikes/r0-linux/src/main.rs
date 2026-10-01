@@ -21,10 +21,11 @@ fn open_panel(app: &AppHandle) {
     let state = app.state::<SpikeState>();
     state.timer.shortcut_fired();
     let paste = state.paste.lock().unwrap();
-    match paste.desktop.frontmost_target() {
-        Ok(target) => *state.target.lock().unwrap() = target,
-        Err(error) => eprintln!("frontmost_target failed: {error}"),
-    }
+    let target = paste.desktop.frontmost_target().unwrap_or_else(|error| {
+        eprintln!("frontmost_target failed: {error}");
+        None
+    });
+    *state.target.lock().unwrap() = target;
     if let Err(error) = paste.desktop.panel_show() {
         eprintln!("panel_show failed: {error}");
     }
@@ -38,7 +39,7 @@ fn panel_ready(state: State<SpikeState>) {
 }
 
 #[tauri::command]
-fn panel_hide(state: State<SpikeState>) -> Result<(), String> {
+async fn panel_hide(state: State<'_, SpikeState>) -> Result<(), String> {
     let paste = state.paste.lock().unwrap();
     paste
         .desktop

@@ -2,7 +2,11 @@ pub const KEYSYM_LOWER_V: u32 = 0x76;
 pub const KEYSYM_SHIFT_LEFT: u32 = 0xffe1;
 pub const KEYSYM_CONTROL_LEFT: u32 = 0xffe3;
 
-const HELD_MODIFIER_MASK: u16 = 0x0001 | 0x0004 | 0x0008 | 0x0040;
+const MASK_SHIFT: u16 = 0x0001;
+const MASK_CONTROL: u16 = 0x0004;
+const MASK_ALT: u16 = 0x0008;
+const MASK_SUPER: u16 = 0x0040;
+const HELD_MODIFIER_MASK: u16 = MASK_SHIFT | MASK_CONTROL | MASK_ALT | MASK_SUPER;
 
 pub fn modifiers_held(pointer_mask: u16) -> bool {
     pointer_mask & HELD_MODIFIER_MASK != 0

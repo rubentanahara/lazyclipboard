@@ -12,7 +12,6 @@ use x11rb::protocol::xproto::{
 };
 use x11rb::protocol::xtest::ConnectionExt as XTestConnectionExt;
 use x11rb::rust_connection::RustConnection;
-use x11rb::wrapper::ConnectionExt as WrapperConnectionExt;
 use x11rb::CURRENT_TIME;
 
 use crate::chord::{paste_chord_for_window_class, PasteChord};
@@ -127,14 +126,15 @@ impl X11Desktop {
         for &keycode in keycodes.iter().rev() {
             self.fake_key(KEY_RELEASE_EVENT, keycode)?;
         }
-        self.connection.sync().map_err(log_internal)
+        Ok(())
     }
 
     fn fake_key(&self, event_type: u8, keycode: u8) -> Result<(), CommandError> {
         self.connection
             .xtest_fake_input(event_type, keycode, CURRENT_TIME, self.root, 0, 0, 0)
-            .map_err(log_internal)?;
-        Ok(())
+            .map_err(log_internal)?
+            .check()
+            .map_err(log_internal)
     }
 
     fn panel(&self) -> Result<tauri::WebviewWindow, CommandError> {
