@@ -1,9 +1,9 @@
 use std::sync::Mutex;
 
 use lazyclipboard_os::api::{Desktop, Flavours, TargetHandle};
+use r0_common::OpenTimer;
 use r0_linux::clipboard::SystemClipboard;
 use r0_linux::paste::PasteSequence;
-use r0_linux::timing::OpenTimer;
 use r0_linux::x11::X11Desktop;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_global_shortcut::ShortcutState;
@@ -75,7 +75,7 @@ fn main() {
         .setup(|app| {
             let desktop = X11Desktop::connect(app.handle().clone())?;
             app.manage(SpikeState {
-                timer: OpenTimer::default(),
+                timer: OpenTimer::new(),
                 target: Mutex::new(None),
                 paste: Mutex::new(PasteSequence {
                     desktop,
