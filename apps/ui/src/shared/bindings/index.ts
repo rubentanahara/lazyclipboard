@@ -22,8 +22,8 @@ export const commands = {
 	pasteAll: (groupId: GroupId, order: PasteOrder, separator: PasteSeparator) => typedError<null, CommandError>(__TAURI_INVOKE("paste_all", { groupId, order, separator })),
 	pasteAiResult: (resultId: string) => typedError<null, CommandError>(__TAURI_INVOKE("paste_ai_result", { resultId })),
 	panelClose: () => typedError<null, CommandError>(__TAURI_INVOKE("panel_close")),
-	aiReformat: (itemId: ItemId, preset: AiPromptPreset) => typedError<AiResult, CommandError>(__TAURI_INVOKE("ai_reformat", { itemId, preset })),
-	aiSummarize: (groupId: GroupId, order: PasteOrder, separator: PasteSeparator, preset: AiPromptPreset) => typedError<AiResult, CommandError>(__TAURI_INVOKE("ai_summarize", { groupId, order, separator, preset })),
+	aiReformat: (itemId: ItemId, preset: ReformatPreset) => typedError<AiResult, CommandError>(__TAURI_INVOKE("ai_reformat", { itemId, preset })),
+	aiSummarize: (groupId: GroupId, order: PasteOrder, separator: PasteSeparator, preset: SummaryPreset) => typedError<AiResult, CommandError>(__TAURI_INVOKE("ai_summarize", { groupId, order, separator, preset })),
 	aiKeySet: (provider: AiProvider, key: string) => typedError<null, CommandError>(__TAURI_INVOKE("ai_key_set", { provider, key })),
 	aiKeyDelete: (provider: AiProvider) => typedError<null, CommandError>(__TAURI_INVOKE("ai_key_delete", { provider })),
 	aiKeyStatus: () => typedError<AiKeyStatus, CommandError>(__TAURI_INVOKE("ai_key_status")),
@@ -57,8 +57,6 @@ export type AiKeyStatus = {
 	openai: boolean,
 	gemini: boolean,
 };
-
-export type AiPromptPreset = "fix_grammar" | "shorten" | "make_formal" | "summarise" | "custom";
 
 export type AiProvider = "anthropic" | "openai" | "gemini";
 
@@ -131,6 +129,8 @@ export type PlatformInfo = {
 
 export type PlatformOs = "macos" | "windows" | "linux";
 
+export type ReformatPreset = "fix_grammar" | "shorten" | "make_formal";
+
 export type Settings = {
 	theme?: Theme,
 	shortcuts?: Shortcuts,
@@ -162,6 +162,8 @@ export type Shortcuts = {
 	copy_to_group: string,
 	paste_from_group: string,
 };
+
+export type SummaryPreset = "summarise";
 
 export type Theme = "light" | "dark" | "system";
 

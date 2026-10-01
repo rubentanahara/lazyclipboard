@@ -60,12 +60,16 @@ pub enum PasteSeparator {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
 #[serde(rename_all = "snake_case")]
-pub enum AiPromptPreset {
+pub enum ReformatPreset {
     FixGrammar,
     Shorten,
     MakeFormal,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "snake_case")]
+pub enum SummaryPreset {
     Summarise,
-    Custom,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
