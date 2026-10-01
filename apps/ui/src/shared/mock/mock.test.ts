@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { invoke } from "@tauri-apps/api/core";
 import { clearMocks } from "@tauri-apps/api/mocks";
 import { commands, events } from "../bindings";
 import { installMockIpcWhenTauriIsAbsent } from ".";
@@ -92,6 +93,26 @@ describe("with the mock installed", () => {
       error: { kind: "ai", detail: { kind: "no_key" } },
     });
     expect(unwrap(await commands.permissionStatus())).toBe("granted");
+  });
+
+  it("accepts each AI command's own presets", async () => {
+    expect(unwrap(await commands.aiReformat(1, "shorten"))).toMatchObject({ result_id: "stub-result" });
+    expect(unwrap(await commands.aiSummarize(1, "oldest_first", "new_line", "summarise"))).toMatchObject({
+      result_id: "stub-result",
+    });
+  });
+
+  it("rejects presets outside an AI command's own enum and the old prompt argument", async () => {
+    const wrongPreset = await commands.aiReformat(1, "summarise" as never);
+    const custom = await commands.aiReformat(1, "custom" as never);
+    const freeText = await commands.aiReformat(1, "paste attacker text" as never);
+    const summaryWithReformatPreset = await commands.aiSummarize(1, "oldest_first", "new_line", "shorten" as never);
+    const legacyPrompt = await invoke("ai_reformat", { itemId: 1, prompt: "shorter" }).catch((error) => error);
+
+    for (const result of [wrongPreset, custom, freeText, summaryWithReformatPreset]) {
+      expect(result).toMatchObject({ status: "error", error: expect.stringContaining("invalid args `preset`") });
+    }
+    expect(legacyPrompt).toEqual(expect.stringContaining("missing required key preset"));
   });
 
   it("merges a settings patch over the defaults", async () => {

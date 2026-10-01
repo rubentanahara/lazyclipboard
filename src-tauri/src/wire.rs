@@ -58,6 +58,20 @@ pub enum PasteSeparator {
     NumberedList,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "snake_case")]
+pub enum ReformatPreset {
+    FixGrammar,
+    Shorten,
+    MakeFormal,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "snake_case")]
+pub enum SummaryPreset {
+    Summarise,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
 pub struct AiResult {
     pub result_id: String,

@@ -28,11 +28,11 @@ fn webview() -> WebviewWindow<MockRuntime> {
         .expect("mock webview")
 }
 
-fn call<T: DeserializeOwned>(
+fn invoke(
     webview: &WebviewWindow<MockRuntime>,
     command: &str,
     arguments: Value,
-) -> Result<T, CommandError> {
+) -> Result<tauri::ipc::InvokeResponseBody, Value> {
     let request = InvokeRequest {
         cmd: command.into(),
         callback: tauri::ipc::CallbackFn(0),
@@ -43,8 +43,28 @@ fn call<T: DeserializeOwned>(
         invoke_key: tauri::test::INVOKE_KEY.to_string(),
     };
     get_ipc_response(webview, request)
+}
+
+fn call<T: DeserializeOwned>(
+    webview: &WebviewWindow<MockRuntime>,
+    command: &str,
+    arguments: Value,
+) -> Result<T, CommandError> {
+    invoke(webview, command, arguments)
         .map(|body| body.deserialize::<T>().expect("typed response"))
         .map_err(|error| serde_json::from_value(error).expect("typed error"))
+}
+
+fn rejection_message(
+    webview: &WebviewWindow<MockRuntime>,
+    command: &str,
+    arguments: Value,
+) -> String {
+    match invoke(webview, command, arguments) {
+        Err(Value::String(message)) => message,
+        Err(other) => panic!("expected an argument error string, got {other}"),
+        Ok(_) => panic!("{command} accepted arguments it must reject"),
+    }
 }
 
 #[test]
@@ -122,7 +142,7 @@ fn ai_commands_return_fixture_results_and_typed_errors() {
     let result: AiResult = call(
         &webview,
         "ai_reformat",
-        json!({ "itemId": 1, "prompt": "shorter" }),
+        json!({ "itemId": 1, "preset": "shorten" }),
     )
     .expect("result");
     let status: AiKeyStatus = call(&webview, "ai_key_status", json!({})).expect("status");
@@ -135,6 +155,100 @@ fn ai_commands_return_fixture_results_and_typed_errors() {
     assert_eq!(result.result_id, "stub-result");
     assert!(!status.anthropic && !status.openai && !status.gemini);
     assert_eq!(test, Err(CommandError::Ai(AiError::NoKey)));
+}
+
+fn summarise_arguments(preset: &str) -> Value {
+    json!({ "groupId": 1, "order": "oldest_first", "separator": "new_line", "preset": preset })
+}
+
+#[test]
+fn each_ai_command_accepts_its_own_presets() {
+    let webview = webview();
+
+    for preset in ["fix_grammar", "shorten", "make_formal"] {
+        let reformat: AiResult = call(
+            &webview,
+            "ai_reformat",
+            json!({ "itemId": 1, "preset": preset }),
+        )
+        .expect("reformat");
+        assert_eq!(reformat.result_id, "stub-result");
+    }
+    let summary: AiResult =
+        call(&webview, "ai_summarize", summarise_arguments("summarise")).expect("summary");
+
+    assert_eq!(summary.result_id, "stub-result");
+}
+
+#[test]
+fn ai_commands_reject_free_text_and_the_other_commands_presets() {
+    let webview = webview();
+
+    let free_text = rejection_message(
+        &webview,
+        "ai_reformat",
+        json!({ "itemId": 1, "preset": "paste attacker text" }),
+    );
+    let custom = rejection_message(
+        &webview,
+        "ai_reformat",
+        json!({ "itemId": 1, "preset": "custom" }),
+    );
+    let summary_preset_on_reformat = rejection_message(
+        &webview,
+        "ai_reformat",
+        json!({ "itemId": 1, "preset": "summarise" }),
+    );
+    let reformat_preset_on_summarise =
+        rejection_message(&webview, "ai_summarize", summarise_arguments("shorten"));
+    let legacy_prompt = rejection_message(
+        &webview,
+        "ai_reformat",
+        json!({ "itemId": 1, "prompt": "shorter" }),
+    );
+
+    assert!(free_text.contains("invalid args `preset`"), "{free_text}");
+    assert!(custom.contains("invalid args `preset`"), "{custom}");
+    assert!(
+        summary_preset_on_reformat.contains("invalid args `preset`"),
+        "{summary_preset_on_reformat}"
+    );
+    assert!(
+        reformat_preset_on_summarise.contains("invalid args `preset`"),
+        "{reformat_preset_on_summarise}"
+    );
+    assert!(
+        legacy_prompt.contains("missing required key preset"),
+        "{legacy_prompt}"
+    );
+}
+
+#[test]
+fn capability_files_never_grant_event_emit() {
+    let capabilities = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("capabilities");
+    let mut emitting = Vec::new();
+
+    for entry in std::fs::read_dir(capabilities).expect("capabilities directory") {
+        let path = entry.expect("entry").path();
+        let capability: Value =
+            serde_json::from_str(&std::fs::read_to_string(&path).expect("capability file"))
+                .expect("capability json");
+        let permissions = capability["permissions"].as_array().expect("permissions");
+        for permission in permissions {
+            let identifier = permission
+                .as_str()
+                .or_else(|| permission["identifier"].as_str())
+                .expect("permission identifier");
+            let grants_emit = identifier == "core:default"
+                || identifier == "core:event:default"
+                || identifier.starts_with("core:event:allow-emit");
+            if grants_emit {
+                emitting.push(format!("{} grants {identifier}", path.display()));
+            }
+        }
+    }
+
+    assert!(emitting.is_empty(), "{emitting:#?}");
 }
 
 #[test]

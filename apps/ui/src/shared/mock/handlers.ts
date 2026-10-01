@@ -6,8 +6,10 @@ import type {
   ItemPreview,
   ItemView,
   PlatformInfo,
+  ReformatPreset,
   Settings,
   SettingsPatch,
+  SummaryPreset,
 } from "../bindings";
 import { IMAGE_SIZE, IMAGE_URL_PREFIX, seededGroups, seededItems, type FixtureItem } from "./fixture";
 
@@ -29,6 +31,8 @@ const DEFAULT_SETTINGS: Settings = {
 };
 const PLATFORM: PlatformInfo = { os: "macos", session: null };
 const NOT_FOUND: CommandError = { kind: "not_found" };
+const REFORMAT_PRESETS: readonly ReformatPreset[] = ["fix_grammar", "shorten", "make_formal"];
+const SUMMARY_PRESETS: readonly SummaryPreset[] = ["summarise"];
 const NO_KEY: CommandError = { kind: "ai", detail: { kind: "no_key" } };
 
 export const createHandlers = (): Record<string, Handler> => {
@@ -46,6 +50,13 @@ export const createHandlers = (): Record<string, Handler> => {
   const returning = (value: unknown, find: (id: unknown) => unknown, key: string): Handler => (args) => {
     find(args[key]);
     return value;
+  };
+  const withPreset = (command: string, presets: readonly string[], handler: Handler): Handler => (args) => {
+    if (!("preset" in args)) return fail(`invalid args \`preset\` for command \`${command}\`: command ${command} missing required key preset`);
+    if (!presets.includes(String(args.preset))) {
+      return fail(`invalid args \`preset\` for command \`${command}\`: unknown variant \`${String(args.preset)}\`, expected one of ${presets.join(", ")}`);
+    }
+    return handler(args);
   };
   const whenFound = (find: (id: unknown) => unknown, key: string): Handler => returning(null, find, key);
 
@@ -73,8 +84,8 @@ export const createHandlers = (): Record<string, Handler> => {
     paste_all: whenFound(group, "groupId"),
     paste_ai_result: done,
     panel_close: done,
-    ai_reformat: returning(STUB_AI_RESULT, item, "itemId"),
-    ai_summarize: returning(STUB_AI_RESULT, group, "groupId"),
+    ai_reformat: withPreset("ai_reformat", REFORMAT_PRESETS, returning(STUB_AI_RESULT, item, "itemId")),
+    ai_summarize: withPreset("ai_summarize", SUMMARY_PRESETS, returning(STUB_AI_RESULT, group, "groupId")),
     ai_key_set: done,
     ai_key_delete: done,
     ai_key_status: () => ({ anthropic: false, openai: false, gemini: false }),
@@ -91,7 +102,7 @@ export const createHandlers = (): Record<string, Handler> => {
   };
 };
 
-const fail = (error: CommandError): never => {
+const fail = (error: CommandError | string): never => {
   throw error;
 };
 

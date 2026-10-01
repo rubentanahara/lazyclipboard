@@ -8,7 +8,8 @@ use tauri::State;
 use crate::stub::Stub;
 use crate::wire::{
     AiKeyStatus, AiResult, CaptureTarget, ItemView, PasteFlavour, PasteOrder, PasteSeparator,
-    PermissionStatus, PlatformInfo, SettingsPatch, ShortcutAction, WindowKind,
+    PermissionStatus, PlatformInfo, ReformatPreset, SettingsPatch, ShortcutAction, SummaryPreset,
+    WindowKind,
 };
 
 const STUB_AI_RESULT_ID: &str = "stub-result";
@@ -145,7 +146,7 @@ pub fn panel_close() -> CommandResult<()> {
 pub fn ai_reformat(
     stub: State<'_, Stub>,
     item_id: ItemId,
-    prompt: String,
+    preset: ReformatPreset,
 ) -> CommandResult<AiResult> {
     stub.item(item_id).map(|_| stub_ai_result())
 }
@@ -157,7 +158,7 @@ pub fn ai_summarize(
     group_id: GroupId,
     order: PasteOrder,
     separator: PasteSeparator,
-    prompt: String,
+    preset: SummaryPreset,
 ) -> CommandResult<AiResult> {
     stub.group(group_id).map(|_| stub_ai_result())
 }
