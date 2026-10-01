@@ -132,3 +132,13 @@ fn a_report_with_too_few_opens_says_how_many_are_needed() {
         "shortcut_to_panel_ready opens=10 p95=10ms max=10ms budget=150ms TOO FEW OPENS (need 50)"
     );
 }
+
+#[test]
+fn a_default_timer_records_opens_like_a_new_one() {
+    let timer = OpenTimer::default();
+
+    timer.shortcut_fired();
+    timer.first_frame_acked();
+
+    assert_eq!(timer.report().opens, 1);
+}
