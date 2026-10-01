@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>r0-wayland panel</title>
+  <style>
+    :root { color-scheme: light dark; font: 14px/1.5 system-ui, sans-serif; }
+    body { margin: 16px; }
+    input { width: 100%; box-sizing: border-box; font: inherit; }
+    li { font-weight: bold; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <input id="filter" aria-label="Filter" placeholder="type to filter" autofocus>
+  <ul aria-label="Items"><li id="item"></li></ul>
+  <p>Shortcut fired: <output id="fired">0</output></p>
+  <p>Last key: <output id="key">none</output></p>
+  <p id="status" role="status">Press Enter to put the sentinel on the clipboard. Esc hides the panel.</p>
+  <script>
+    const { invoke } = window.__TAURI__.core;
+    const { listen } = window.__TAURI__.event;
+    const filter = document.getElementById("filter");
+    const item = document.getElementById("item");
+    const fired = document.getElementById("fired");
+    const key = document.getElementById("key");
+    const status = document.getElementById("status");
+
+    async function pasteSentinel() {
+      try {
+        const text = await invoke("paste_sentinel");
+        status.textContent = "Placed on the clipboard: " + text;
+        item.textContent = text;
+      } catch (error) {
+        status.textContent = "Clipboard write failed: " + error;
+      }
+    }
+
+    listen("fired", (event) => {
+      fired.textContent = event.payload;
+      filter.value = "";
+      filter.focus();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      key.textContent = event.key;
+      if (event.key === "Enter") pasteSentinel();
+      if (event.key === "Escape") invoke("hide_panel");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+[package]
+name = "r0-wayland"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+arboard = { version = "3.6", default-features = false, features = ["wayland-data-control"] }
+ashpd = { version = "0.13", features = ["global_shortcuts"] }
+futures-util = "0.3"
+tauri = { version = "2", features = [] }
