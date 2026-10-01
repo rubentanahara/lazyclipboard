@@ -33,6 +33,10 @@ function reset() {
   render();
 }
 
+function showError(message) {
+  error.textContent = String(message);
+}
+
 function move(step) {
   selected = (selected + step + rows.length) % rows.length;
   render();
@@ -43,11 +47,9 @@ function onKey(event) {
   keys.textContent = `Key #${keyCount}: ${event.key}${event.shiftKey ? " (Shift held)" : ""}`;
   if (event.key === "ArrowDown") move(1);
   else if (event.key === "ArrowUp") move(-1);
-  else if (event.key === "Enter") {
-    invoke("paste", { text: rows[selected] }).catch((message) => {
-      error.textContent = String(message);
-    });
-  } else if (event.key === "Escape") invoke("panel_hide");
+  else if (event.key === "Enter" && !event.repeat) {
+    invoke("paste", { text: rows[selected] }).catch(showError);
+  } else if (event.key === "Escape") invoke("panel_hide").catch(showError);
   else if (event.key.length === 1) query.textContent += event.key;
 }
 

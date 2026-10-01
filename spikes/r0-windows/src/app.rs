@@ -99,7 +99,7 @@ fn on_shortcut(app: &AppHandle, _shortcut: &Shortcut, event: ShortcutEvent) {
 
 fn toggle_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
     if panel.is_visible().map_err(|error| error.to_string())? {
-        return panel.hide().map_err(|error| error.to_string());
+        return close_panel(panel, spike);
     }
     open_panel(panel, spike)
 }
@@ -127,7 +127,7 @@ fn open_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn panel_ready(spike: State<Spike>) {
+fn panel_ready(panel: WebviewWindow, spike: State<Spike>) {
     let Some(elapsed) = spike.timer.first_frame_acked() else {
         log("first-frame ack without a pending shortcut");
         return;
@@ -135,8 +135,11 @@ fn panel_ready(spike: State<Spike>) {
     let foreground_is_target = spike
         .target()
         .is_some_and(|target| target.hwnd == win32::foreground_hwnd());
+    let panel_is_foreground = panel
+        .hwnd()
+        .is_ok_and(|hwnd| hwnd.0 as isize == win32::foreground_hwnd());
     log(&format!(
-        "open ready_ms={:.1} foreground_is_target={foreground_is_target} {}",
+        "open ready_ms={:.1} foreground_is_target={foreground_is_target} panel_is_foreground={panel_is_foreground} {}",
         elapsed.as_secs_f64() * 1000.0,
         spike.timer.summary(),
     ));
@@ -144,11 +147,7 @@ fn panel_ready(spike: State<Spike>) {
 
 #[tauri::command]
 fn panel_hide(panel: WebviewWindow, spike: State<Spike>) -> Result<(), String> {
-    let target = spike.target().take();
-    match target {
-        Some(target) => hide_and_return_focus(&panel, &spike, target),
-        None => panel.hide().map_err(|error| error.to_string()),
-    }
+    close_panel(&panel, &spike)
 }
 
 #[tauri::command]
@@ -185,6 +184,14 @@ fn paste_sequence(panel: &WebviewWindow, spike: &Spike, text: &str) -> Result<()
     win32::restore_clipboard(&snapshot)?;
     log("clipboard restored");
     Ok(())
+}
+
+fn close_panel(panel: &WebviewWindow, spike: &Spike) -> Result<(), String> {
+    let target = spike.target().take();
+    match target {
+        Some(target) => hide_and_return_focus(panel, spike, target),
+        None => panel.hide().map_err(|error| error.to_string()),
+    }
 }
 
 fn hide_and_return_focus(
