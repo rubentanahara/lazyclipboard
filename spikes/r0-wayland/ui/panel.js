@@ -3,6 +3,7 @@ const key = document.getElementById("key");
 const status = document.getElementById("status");
 
 async function pasteSentinel() {
+  status.textContent = "Writing the sentinel to the clipboard...";
   try {
     const text = await invoke("paste_sentinel");
     status.textContent = "Placed on the clipboard: " + text;
