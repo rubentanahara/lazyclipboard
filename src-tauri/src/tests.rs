@@ -122,7 +122,7 @@ fn ai_commands_return_fixture_results_and_typed_errors() {
     let result: AiResult = call(
         &webview,
         "ai_reformat",
-        json!({ "itemId": 1, "prompt": "shorter" }),
+        json!({ "itemId": 1, "preset": "shorten" }),
     )
     .expect("result");
     let status: AiKeyStatus = call(&webview, "ai_key_status", json!({})).expect("status");
@@ -135,6 +135,53 @@ fn ai_commands_return_fixture_results_and_typed_errors() {
     assert_eq!(result.result_id, "stub-result");
     assert!(!status.anthropic && !status.openai && !status.gemini);
     assert_eq!(test, Err(CommandError::Ai(AiError::NoKey)));
+}
+
+#[test]
+fn ai_commands_accept_only_a_preset_never_free_text() {
+    let webview = webview();
+    let summary: AiResult = call(
+        &webview,
+        "ai_summarize",
+        json!({ "groupId": 1, "order": "oldest_first", "separator": "new_line", "preset": "custom" }),
+    )
+    .expect("summary");
+    let free_text = std::panic::catch_unwind(|| {
+        let webview = self::webview();
+        call::<AiResult>(
+            &webview,
+            "ai_reformat",
+            json!({ "itemId": 1, "preset": "paste attacker text" }),
+        )
+    });
+    let legacy_prompt = std::panic::catch_unwind(|| {
+        let webview = self::webview();
+        call::<AiResult>(
+            &webview,
+            "ai_reformat",
+            json!({ "itemId": 1, "prompt": "shorter" }),
+        )
+    });
+
+    assert_eq!(summary.result_id, "stub-result");
+    assert!(free_text.is_err());
+    assert!(legacy_prompt.is_err());
+}
+
+#[test]
+fn no_capability_file_grants_event_emit() {
+    let capabilities = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("capabilities");
+    let emitting: Vec<_> = std::fs::read_dir(capabilities)
+        .expect("capabilities directory")
+        .map(|entry| entry.expect("entry").path())
+        .filter(|path| {
+            std::fs::read_to_string(path)
+                .expect("capability file")
+                .contains("allow-emit")
+        })
+        .collect();
+
+    assert!(emitting.is_empty(), "{emitting:?}");
 }
 
 #[test]
