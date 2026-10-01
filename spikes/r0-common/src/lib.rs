@@ -22,14 +22,14 @@ pub struct OpenReport {
 }
 
 #[derive(Default)]
-struct Opens {
+struct OpenState {
     pending: Option<Instant>,
     samples: Vec<Duration>,
 }
 
 #[derive(Default)]
 pub struct OpenTimer {
-    opens: Mutex<Opens>,
+    state: Mutex<OpenState>,
 }
 
 impl OpenTimer {
@@ -38,23 +38,24 @@ impl OpenTimer {
     }
 
     pub fn shortcut_fired(&self) {
-        self.opens().pending = Some(Instant::now());
+        let mut state = self.lock_state();
+        state.pending = Some(Instant::now());
     }
 
     pub fn first_frame_acked(&self) -> Option<Duration> {
+        let mut state = self.lock_state();
         let acked_at = Instant::now();
-        let mut opens = self.opens();
-        let elapsed = acked_at.duration_since(opens.pending.take()?);
-        opens.samples.push(elapsed);
+        let elapsed = acked_at.duration_since(state.pending.take()?);
+        state.samples.push(elapsed);
         Some(elapsed)
     }
 
     pub fn report(&self) -> OpenReport {
-        OpenReport::from_samples(&self.opens().samples)
+        OpenReport::from_samples(&self.lock_state().samples)
     }
 
-    fn opens(&self) -> MutexGuard<'_, Opens> {
-        self.opens.lock().unwrap_or_else(PoisonError::into_inner)
+    fn lock_state(&self) -> MutexGuard<'_, OpenState> {
+        self.state.lock().unwrap_or_else(PoisonError::into_inner)
     }
 }
 

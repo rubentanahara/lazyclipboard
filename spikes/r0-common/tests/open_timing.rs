@@ -142,3 +142,26 @@ fn a_default_timer_records_opens_like_a_new_one() {
 
     assert_eq!(timer.report().opens, 1);
 }
+
+#[test]
+fn an_ack_reports_at_least_the_time_since_the_shortcut() {
+    let timer = OpenTimer::new();
+    let wait = Duration::from_millis(20);
+
+    timer.shortcut_fired();
+    std::thread::sleep(wait);
+    let elapsed = timer.first_frame_acked().unwrap();
+
+    assert!(elapsed >= wait);
+    assert!(timer.report().max >= wait);
+}
+
+#[test]
+fn p95_does_not_depend_on_the_order_the_opens_arrived_in() {
+    let samples = millis([500, 10].into_iter().chain(std::iter::repeat_n(10, 48)));
+
+    let report = OpenReport::from_samples(&samples);
+
+    assert_eq!(report.p95, Duration::from_millis(10));
+    assert_eq!(report.max, Duration::from_millis(500));
+}
