@@ -5,11 +5,16 @@ edition = "2021"
 publish = false
 
 [dependencies]
+ammonia = "4.2.0"
+png = "0.18.1"
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 serde = { version = "1", features = ["derive"] }
+sha2 = "0.10"
 specta = { version = "=2.0.0-rc.25", features = ["derive"] }
 specta-typescript = "0.0.12"
 thiserror = "2"
+uuid = { version = "1.26.1", features = ["v4"] }
 
 [dev-dependencies]
 specta-serde = "0.0.12"
+tempfile = "3.27.0"
