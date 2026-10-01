@@ -48,6 +48,8 @@ function onKey(event) {
   if (event.key === "ArrowDown") move(1);
   else if (event.key === "ArrowUp") move(-1);
   else if (event.key === "Enter" && !event.repeat) {
+    keys.textContent = "Pasting…";
+    error.textContent = "";
     invoke("paste", { text: rows[selected] }).catch(showError);
   } else if (event.key === "Escape") invoke("panel_hide").catch(showError);
   else if (event.key.length === 1) query.textContent += event.key;
