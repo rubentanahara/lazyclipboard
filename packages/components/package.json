@@ -2,6 +2,13 @@
   "name": "@lazyclipboard/components",
   "private": true,
   "type": "module",
+  "exports": {
+    "./controls": "./src/controls/index.ts",
+    "./feedback": "./src/feedback/index.ts",
+    "./forms": "./src/forms/index.ts",
+    "./rows": "./src/rows/index.ts",
+    "./*": "./src/*.ts"
+  },
   "scripts": {
     "types": "tsc --noEmit"
   },
