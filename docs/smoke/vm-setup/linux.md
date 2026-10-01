@@ -11,17 +11,16 @@ Nothing here has been run on a VM. `[unverified]` marks a detail the vendor docu
 | Ubuntu 22.04 GNOME | `ubuntu-22.04.5-desktop-amd64.iso` from releases.ubuntu.com | X11 and Wayland, from the one guest |
 | Kubuntu 22.04 KDE Plasma | `kubuntu-22.04.5-desktop-amd64.iso` from cdimage.ubuntu.com/kubuntu/releases/22.04/release/ | Plasma X11 and Plasma Wayland, from the one guest |
 
-Both desktop ISOs are amd64 only. On Apple Silicon install `ubuntu-22.04.5-live-server-arm64.iso` from cdimage.ubuntu.com/releases/22.04/release/, then run `sudo apt install ubuntu-desktop` for the GNOME guest or `sudo apt install kubuntu-desktop` for the KDE guest `[unverified: end-to-end on arm64]`. Ubuntu 22.04 is in standard support until April 2027.
-
+Both desktop ISOs are amd64 only. On Apple Silicon install `ubuntu-22.04.5-live-server-arm64.iso` from cdimage.ubuntu.com/releases/22.04/release/, then run `sudo apt install ubuntu-desktop` for the GNOME guest or `sudo apt install kubuntu-desktop` for the KDE guest `[unverified: end-to-end on arm64]`.
 ## Wayland global shortcut support by release
 
-Ubuntu 22.04 cannot test the Wayland global shortcut path. The GlobalShortcuts portal needs three parts: the `xdg-desktop-portal` frontend, a desktop backend, and the app. The table shows which parts each release ships. Package versions come from packages.ubuntu.com. The frontend gained the interface in `xdg-desktop-portal` 1.16.0 (2022-12-12). `xdg-desktop-portal-gnome` gained its backend in 48. `xdg-desktop-portal-kde` has `src/globalshortcuts.cpp` at tag v5.27.0 and not at v5.24.4.
+Ubuntu 22.04 cannot test the Wayland global shortcut path. The GlobalShortcuts portal needs three parts: the `xdg-desktop-portal` frontend, a desktop backend, and the app. The table shows which parts each release ships. Package versions come from packages.ubuntu.com; backend presence comes from upstream release notes and source. No release below was run. The frontend gained the interface in `xdg-desktop-portal` 1.16.0 (2022-12-12). `xdg-desktop-portal-gnome` gained its backend in 48. `xdg-desktop-portal-kde` has `src/globalshortcuts.cpp` at tag v5.27.0 and not at v5.24.4.
 
 | Release | `xdg-desktop-portal` | GNOME backend | KDE backend | GlobalShortcuts |
 | --- | --- | --- | --- | --- |
 | Ubuntu and Kubuntu 22.04 | 1.14.x | `xdg-desktop-portal-gnome` 42.1 | `xdg-desktop-portal-kde` 5.24.4 | Absent on both desktops |
-| 24.04 | 1.18.4 | 46.0 | 5.27.11 | KDE only |
-| 26.04 | 1.21.1 | 50.0 | 6.6.4 | GNOME and KDE |
+| 24.04 | 1.18.4 | 46.0 | 5.27.11 | KDE backend present, GNOME absent |
+| 26.04 | 1.21.1 | 50.0 | 6.6.4 | GNOME and KDE backends present |
 
 On 22.04 a Wayland run exercises only the fallback path for a missing portal. For the real portal path add one of these guests, built the same way as the 22.04 guests:
 
@@ -32,7 +31,7 @@ The issue that owns the Wayland spike decides whether to add them. Treat this ta
 
 ## Create the guest in UTM
 
-1. In UTM choose `+`, Virtualize, Linux. Give it 4 CPUs, 8 GB memory and a 64 GB disk.
+1. In UTM choose `+`, Virtualize, Linux `[unverified: wizard path]`. Give it 4 CPUs, 8 GB memory and a 64 GB disk.
 2. Install the distro and update it with `sudo apt update && sudo apt full-upgrade`.
 3. Do not install `spice-vdagent`. UTM documents it as required for clipboard sharing and dynamic resolution. Skipping it costs auto-resize, so set the resolution by hand. https://docs.getutm.app/guest-support/linux/
 4. Turn off clipboard sharing in the VM's UTM settings `[unverified: setting location]`.

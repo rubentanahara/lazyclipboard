@@ -8,6 +8,8 @@ The Windows and Linux blocks of `docs/smoke/checklist/template.md` run on virtua
 | `windows.md` | Windows 11 and Windows 10 guests |
 | `linux.md` | Ubuntu 22.04 GNOME on X11 and Wayland, Kubuntu 22.04 KDE Plasma, newer Wayland guests |
 
+`docs/smoke/checklist/vm-setup.md` is an earlier draft with the same purpose. Where the two differ, this directory is newer.
+
 ## Status of this document
 
 Written on 2026-09-30 from vendor documentation. No step in these files has been run on a VM, so every rig is untested. A person with a real VM must follow the files once and record the result in the table below. `[unverified]` marks a detail the vendor documentation I read did not confirm.

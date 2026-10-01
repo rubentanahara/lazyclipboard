@@ -11,8 +11,7 @@ Nothing here has been run on a VM. `[unverified]` marks a detail the vendor docu
 | Windows 11 | Windows 11 Enterprise evaluation ISO from the Microsoft Evaluation Center, 90 days, x64 and Arm64 ISOs listed (26H2 at the time of writing). https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise | ARM64 |
 | Windows 10 | Windows 10 22H2 multi-edition ISO (Home and Pro) from https://www.microsoft.com/en-us/software-download/windows10ISO. The page I read showed an error where the download links belong, so the download is `[unverified]`. | No ARM64 ISO is listed. Needs an x64 host or x86_64 emulation, so timing is not valid |
 
-Windows 10 reached end of support on 2025-10-14, so the rig gets no security updates. Use it only for the smoke run and keep it off the network outside the run `[unverified: whether the guest needs network after install]`.
-
+Windows 10 reached end of support on 2025-10-14, so the rig gets no security updates.
 Windows 10 Enterprise is not listed on the Evaluation Center page.
 
 An Arm64 Windows 11 ISO can also come from CrystalFetch or Microsoft's Windows 11 ARM64 page, per the UTM guide: https://docs.getutm.app/guides/windows/
@@ -55,7 +54,7 @@ Run the six lines in `README.md`, then these Windows lines:
 | Template precondition | Check |
 | --- | --- |
 | App started as a normal user, not elevated | Sign in as `smoke`. Task Manager, Details tab, Elevated column shows `No` for the app |
-| WebView2 Evergreen runtime present | `Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}' \| Select-Object pv` prints a version `[unverified: registry path]` |
+| WebView2 Evergreen runtime present | Settings, Apps, Installed apps lists `Microsoft Edge WebView2 Runtime` `[unverified: listing name]` |
 | Clipboard holds a known text sentinel | `Set-Clipboard -Value 'smoke-sentinel'`, then `Get-Clipboard` prints `smoke-sentinel` |
 
 Record `winver` output and `$env:PROCESSOR_ARCHITECTURE` on the `Windows version and architecture` line.
