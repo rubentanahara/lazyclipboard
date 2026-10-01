@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 16px;
+  font: 14px/20px system-ui, sans-serif;
+  color: CanvasText;
+  background: Canvas;
+}
+
+.overline {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.query {
+  min-height: 24px;
+  margin: 0 0 8px;
+  padding: 4px 8px;
+  border: 1px solid CanvasText;
+}
+
+.rows {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.rows li {
+  padding: 4px 8px 4px 24px;
+}
+
+.rows li[aria-selected="true"] {
+  font-weight: 700;
+  color: HighlightText;
+  background: Highlight;
+}
+
+.rows li[aria-selected="true"]::before {
+  content: "›";
+  margin: 0 8px 0 -16px;
+}
+
+.status {
+  margin: 0;
+}
+
+.error {
+  font-weight: 700;
+}
