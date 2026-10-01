@@ -7,9 +7,8 @@ use ashpd::desktop::global_shortcuts::{BindShortcutsOptions, GlobalShortcuts, Ne
 use ashpd::desktop::CreateSessionOptions;
 use ashpd::{register_host_app, AppID};
 use futures_util::StreamExt;
-use tauri::{AppHandle, Emitter, Manager, State, WebviewWindow};
+use tauri::{AppHandle, Manager, State, WebviewWindow};
 
-const APP_ID: &str = "dev.lazyclipboard.R0Wayland";
 const SHORTCUT_ID: &str = "open-panel";
 const SHORTCUT_DESCRIPTION: &str = "Open the R0 spike panel";
 const PREFERRED_TRIGGER: &str = "CTRL+ALT+c";
@@ -19,7 +18,7 @@ const SENTINEL_PREFIX: &str = "lazyclipboard-r0-sentinel-";
 struct RunState {
     fired: AtomicU32,
     written: AtomicU32,
-    clipboard: Mutex<Clipboard>,
+    clipboard: Mutex<Option<Clipboard>>,
 }
 
 fn sentinel(count: u32) -> String {
@@ -45,18 +44,16 @@ fn open_panel(app: &AppHandle) {
     };
     log_failure("show", panel.show());
     log_failure("set_focus", panel.set_focus());
-    log_failure("emit fired", panel.emit("fired", fired));
     log_line(format_args!("panel position={:?}", panel.outer_position()));
 }
 
 #[tauri::command]
 fn paste_sentinel(state: State<RunState>, panel: WebviewWindow) -> Result<String, String> {
+    let mut guard = state.clipboard.lock().map_err(|error| error.to_string())?;
+    let clipboard = guard.as_mut().ok_or("clipboard unavailable")?;
     let written = state.written.fetch_add(1, Ordering::SeqCst) + 1;
     let text = sentinel(written);
-    state
-        .clipboard
-        .lock()
-        .map_err(|error| error.to_string())?
+    clipboard
         .set_text(text.clone())
         .map_err(|error| error.to_string())?;
     log_line(format_args!("sentinel_written n={written} text={text}"));
@@ -69,8 +66,11 @@ fn hide_panel(panel: WebviewWindow) {
     log_failure("hide", panel.hide());
 }
 
-async fn listen_for_shortcut(app: AppHandle) -> ashpd::Result<()> {
-    register_host_app(AppID::try_from(APP_ID)?).await?;
+async fn listen_for_shortcut(app: AppHandle, app_id: String) -> ashpd::Result<()> {
+    log_failure(
+        "register_host_app",
+        register_host_app(AppID::try_from(app_id)?).await,
+    );
     let portal = GlobalShortcuts::new().await?;
     let mut activations = portal.receive_activated().await?;
     let session = portal
@@ -90,6 +90,10 @@ async fn listen_for_shortcut(app: AppHandle) -> ashpd::Result<()> {
         ));
     }
     while let Some(activation) = activations.next().await {
+        log_line(format_args!(
+            "activated options={:?}",
+            activation.options().keys().collect::<Vec<_>>()
+        ));
         if activation.shortcut_id() == SHORTCUT_ID {
             open_panel(&app);
         }
@@ -104,11 +108,12 @@ fn main() {
             app.manage(RunState {
                 fired: AtomicU32::new(0),
                 written: AtomicU32::new(0),
-                clipboard: Mutex::new(Clipboard::new()?),
+                clipboard: Mutex::new(Clipboard::new().map_err(log_line).ok()),
             });
             let handle = app.handle().clone();
+            let app_id = app.config().identifier.clone();
             tauri::async_runtime::spawn(async move {
-                log_failure("portal shortcut", listen_for_shortcut(handle).await);
+                log_failure("portal shortcut", listen_for_shortcut(handle, app_id).await);
             });
             Ok(())
         })
