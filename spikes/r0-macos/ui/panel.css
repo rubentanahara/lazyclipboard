@@ -1,0 +1,62 @@
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --text-body: 14px;
+  --radius-1: 4px;
+  --border-width: 1px;
+  --focus-width: 2px;
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  font: var(--text-body) system-ui, sans-serif;
+  background: Canvas;
+  color: CanvasText;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+input {
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  border: var(--border-width) solid GrayText;
+  border-radius: var(--radius-1);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-1);
+}
+
+li[aria-selected="true"] {
+  background: Highlight;
+  color: HighlightText;
+  outline: var(--focus-width) solid CanvasText;
+}
+
+li[aria-selected="true"]::before {
+  content: "▸ ";
+}
+
+#status {
+  margin: 0;
+  color: GrayText;
+}
+
+#permission[hidden] {
+  display: none;
+}

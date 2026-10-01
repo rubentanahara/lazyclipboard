@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>r0-macos</title>
+    <link rel="stylesheet" href="panel.css" />
+    <script src="panel.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <input id="search" type="text" autocomplete="off" placeholder="Search" aria-label="Search" />
+      <ul id="items" role="listbox" aria-label="Items">
+        <li role="option" aria-selected="true">Sentinel</li>
+        <li role="option" aria-selected="false">Second item</li>
+        <li role="option" aria-selected="false">Third item</li>
+      </ul>
+      <p id="status" role="status"></p>
+      <section id="permission" hidden>
+        <p>Accessibility permission is needed to paste.</p>
+        <button id="open-settings" type="button">Open Accessibility settings</button>
+      </section>
+    </main>
+  </body>
+</html>
