@@ -1,0 +1,21 @@
+[package]
+name = "r0-macos"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[target.'cfg(target_os = "macos")'.build-dependencies]
+tauri-build = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-foundation = "0.10"
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSPasteboard", "NSPasteboardItem", "NSRunningApplication", "NSWorkspace"] }
+objc2-core-graphics = { version = "0.3", default-features = false, features = ["std", "CGEvent", "CGEventSource", "CGEventTypes", "CGRemoteOperation"] }
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSData", "NSString"] }
+serde_json = "1"
+tauri = "2"
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", rev = "6e595d776e9ac594b73e5a180155800f4da6c87d" }
+tauri-plugin-global-shortcut = "2"
