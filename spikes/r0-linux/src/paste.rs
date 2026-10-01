@@ -2,7 +2,7 @@ use std::thread;
 use std::time::Duration;
 
 use lazyclipboard_core::model::CommandError;
-use lazyclipboard_os::api::{Clipboard, Desktop, Flavours, TargetHandle};
+use lazyclipboard_os::api::{Clipboard, ClipboardSnapshot, Desktop, Flavours, TargetHandle};
 
 pub const MODIFIER_RELEASE_TIMEOUT: Duration = Duration::from_millis(1000);
 pub const RESTORE_DELAY: Duration = Duration::from_millis(250);
@@ -17,8 +17,19 @@ impl<D: Desktop, C: Clipboard> PasteSequence<D, C> {
         let prior = self.clipboard.snapshot()?;
         let delivered = self.deliver(target, item);
         thread::sleep(RESTORE_DELAY);
-        let restored = self.clipboard.restore(prior);
+        let restored = self.restore_unless_replaced(prior, item);
         delivered.and(restored)
+    }
+
+    fn restore_unless_replaced(
+        &mut self,
+        prior: ClipboardSnapshot,
+        item: &Flavours,
+    ) -> Result<(), CommandError> {
+        match self.clipboard.read_flavours() {
+            Ok(current) if current == *item => self.clipboard.restore(prior),
+            _ => Ok(()),
+        }
     }
 
     fn deliver(&mut self, target: TargetHandle, item: &Flavours) -> Result<(), CommandError> {
@@ -49,9 +60,13 @@ mod tests {
     const TARGET: TargetHandle = TargetHandle(0x3a0_0007);
     const PNG_SIGNATURE: [u8; 4] = [0x89, b'P', b'N', b'G'];
 
+    type SharedClipboard = Rc<RefCell<FakeClipboard>>;
+
     struct SpyDesktop {
         log: Log,
         chord_fails: bool,
+        modifiers_stuck: bool,
+        copy_during_paste: Option<(SharedClipboard, Flavours)>,
     }
 
     impl Desktop for SpyDesktop {
@@ -61,6 +76,9 @@ mod tests {
 
         fn wait_modifiers_released(&self, _timeout: Duration) -> Result<(), CommandError> {
             self.log.borrow_mut().push("wait_modifiers_released");
+            if self.modifiers_stuck {
+                return Err(CommandError::Internal);
+            }
             Ok(())
         }
 
@@ -71,6 +89,9 @@ mod tests {
         fn send_paste_chord(&self, target: TargetHandle) -> Result<(), CommandError> {
             assert_eq!(target, TARGET);
             self.log.borrow_mut().push("send_paste_chord");
+            if let Some((clipboard, copied)) = &self.copy_during_paste {
+                clipboard.borrow_mut().write_item(copied).unwrap();
+            }
             if self.chord_fails {
                 return Err(CommandError::Internal);
             }
@@ -93,31 +114,31 @@ mod tests {
 
     struct SpyClipboard {
         log: Log,
-        inner: FakeClipboard,
+        inner: SharedClipboard,
     }
 
     impl Clipboard for SpyClipboard {
         fn snapshot(&mut self) -> Result<ClipboardSnapshot, CommandError> {
             self.log.borrow_mut().push("snapshot");
-            self.inner.snapshot()
+            self.inner.borrow_mut().snapshot()
         }
 
         fn restore(&mut self, snapshot: ClipboardSnapshot) -> Result<(), CommandError> {
             self.log.borrow_mut().push("restore");
-            self.inner.restore(snapshot)
+            self.inner.borrow_mut().restore(snapshot)
         }
 
         fn change_count(&self) -> u64 {
-            self.inner.change_count()
+            self.inner.borrow().change_count()
         }
 
         fn read_flavours(&self) -> Result<Flavours, CommandError> {
-            self.inner.read_flavours()
+            self.inner.borrow().read_flavours()
         }
 
         fn write_item(&mut self, flavours: &Flavours) -> Result<(), CommandError> {
             self.log.borrow_mut().push("write_item");
-            self.inner.write_item(flavours)
+            self.inner.borrow_mut().write_item(flavours)
         }
     }
 
@@ -139,13 +160,23 @@ mod tests {
         prior: &Flavours,
         chord_fails: bool,
     ) -> (PasteSequence<SpyDesktop, SpyClipboard>, Log) {
+        sequence_with_copy_during_paste(prior, chord_fails, None)
+    }
+
+    fn sequence_with_copy_during_paste(
+        prior: &Flavours,
+        chord_fails: bool,
+        copied: Option<Flavours>,
+    ) -> (PasteSequence<SpyDesktop, SpyClipboard>, Log) {
         let log = Log::default();
-        let mut inner = FakeClipboard::default();
-        inner.write_item(prior).unwrap();
+        let inner = SharedClipboard::default();
+        inner.borrow_mut().write_item(prior).unwrap();
         let sequence = PasteSequence {
             desktop: SpyDesktop {
                 log: Rc::clone(&log),
                 chord_fails,
+                modifiers_stuck: false,
+                copy_during_paste: copied.map(|flavours| (Rc::clone(&inner), flavours)),
             },
             clipboard: SpyClipboard {
                 log: Rc::clone(&log),
@@ -199,6 +230,32 @@ mod tests {
         let outcome = sequence.run(TARGET, &text("sentinel"));
 
         assert!(outcome.is_err());
+        assert_eq!(sequence.clipboard.read_flavours().unwrap(), text("prior"));
+    }
+
+    #[test]
+    fn a_copy_made_while_pasting_is_not_overwritten_by_the_restore() {
+        let (mut sequence, log) =
+            sequence_with_copy_during_paste(&text("prior"), false, Some(text("fresh copy")));
+
+        sequence.run(TARGET, &text("sentinel")).unwrap();
+
+        assert_eq!(
+            sequence.clipboard.read_flavours().unwrap(),
+            text("fresh copy")
+        );
+        assert!(!log.borrow().contains(&"restore"));
+    }
+
+    #[test]
+    fn modifiers_that_never_release_send_no_chord_and_restore_the_prior_content() {
+        let (mut sequence, log) = sequence_holding(&text("prior"), false);
+        sequence.desktop.modifiers_stuck = true;
+
+        let outcome = sequence.run(TARGET, &text("sentinel"));
+
+        assert!(outcome.is_err());
+        assert!(!log.borrow().contains(&"send_paste_chord"));
         assert_eq!(sequence.clipboard.read_flavours().unwrap(), text("prior"));
     }
 }

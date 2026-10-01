@@ -19,7 +19,7 @@ pub fn keycode_for_keysym(
     wanted: u32,
 ) -> Option<u8> {
     let position = keysyms.iter().position(|&keysym| keysym == wanted)?;
-    let row = position / usize::from(keysyms_per_keycode);
+    let row = position.checked_div(usize::from(keysyms_per_keycode))?;
     u8::try_from(row).ok()?.checked_add(first_keycode)
 }
 
@@ -93,12 +93,8 @@ mod tests {
         assert_eq!(keycode, None);
     }
 
-    const MASK_SHIFT: u16 = 0x0001;
     const MASK_CAPS_LOCK: u16 = 0x0002;
-    const MASK_CONTROL: u16 = 0x0004;
-    const MASK_ALT: u16 = 0x0008;
     const MASK_NUM_LOCK: u16 = 0x0010;
-    const MASK_SUPER: u16 = 0x0040;
     const MASK_BUTTON_ONE: u16 = 0x0100;
 
     #[test]
@@ -113,5 +109,12 @@ mod tests {
         for mask in [0, MASK_CAPS_LOCK, MASK_NUM_LOCK, MASK_BUTTON_ONE] {
             assert!(!modifiers_held(mask), "mask {mask:#06x}");
         }
+    }
+
+    #[test]
+    fn a_mapping_with_no_keysyms_per_keycode_has_no_keycode() {
+        let keycode = keycode_for_keysym(FIRST_KEYCODE, 0, &[KEYSYM_LOWER_V], KEYSYM_LOWER_V);
+
+        assert_eq!(keycode, None);
     }
 }

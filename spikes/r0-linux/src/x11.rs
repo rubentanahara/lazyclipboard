@@ -23,6 +23,8 @@ pub const PANEL_LABEL: &str = "panel";
 pub const PANEL_SHOWN_EVENT: &str = "panel-shown";
 pub const FOCUS_SETTLE_DELAY: Duration = Duration::from_millis(50);
 const MODIFIER_POLL_INTERVAL: Duration = Duration::from_millis(10);
+const FOCUS_TIMEOUT: Duration = Duration::from_millis(500);
+const FOCUS_POLL_INTERVAL: Duration = Duration::from_millis(10);
 const PAGER_SOURCE_INDICATION: u32 = 2;
 const WINDOW_CLASS_MAX_WORDS: u32 = 64;
 
@@ -95,6 +97,18 @@ impl X11Desktop {
         self.connection.flush().map_err(log_internal)
     }
 
+    fn wait_until_active(&self, target: TargetHandle) -> Result<(), CommandError> {
+        let deadline = Instant::now() + FOCUS_TIMEOUT;
+        while Instant::now() < deadline {
+            if self.frontmost_target()? == Some(target) {
+                return Ok(());
+            }
+            thread::sleep(FOCUS_POLL_INTERVAL);
+        }
+        eprintln!("target window {target:?} did not become active within {FOCUS_TIMEOUT:?}");
+        Err(CommandError::Internal)
+    }
+
     fn keycodes_for(&self, keysyms: &[u32]) -> Result<Vec<u8>, CommandError> {
         let setup = self.connection.setup();
         let first_keycode = setup.min_keycode;
@@ -137,6 +151,12 @@ impl X11Desktop {
             .map_err(log_internal)
     }
 
+    pub fn panel_is_visible(&self) -> bool {
+        self.panel()
+            .and_then(|panel| panel.is_visible().map_err(log_internal))
+            .unwrap_or(false)
+    }
+
     fn panel(&self) -> Result<tauri::WebviewWindow, CommandError> {
         self.app
             .get_webview_window(PANEL_LABEL)
@@ -174,8 +194,8 @@ impl Desktop for X11Desktop {
             }
             thread::sleep(MODIFIER_POLL_INTERVAL);
         }
-        eprintln!("modifiers still held after {timeout:?}, pasting anyway");
-        Ok(())
+        eprintln!("modifiers still held after {timeout:?}");
+        Err(CommandError::Internal)
     }
 
     fn send_copy_chord(&self) -> Result<(), CommandError> {
@@ -186,6 +206,7 @@ impl Desktop for X11Desktop {
         let window = Window::try_from(target.0).map_err(log_internal)?;
         let chord = paste_chord_for_window_class(&self.window_class(window));
         self.activate(window)?;
+        self.wait_until_active(target)?;
         thread::sleep(FOCUS_SETTLE_DELAY);
         let keysyms: &[u32] = match chord {
             PasteChord::ControlV => &[KEYSYM_CONTROL_LEFT, KEYSYM_LOWER_V],

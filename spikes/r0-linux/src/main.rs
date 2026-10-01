@@ -19,8 +19,11 @@ struct SpikeState {
 
 fn open_panel(app: &AppHandle) {
     let state = app.state::<SpikeState>();
-    state.timer.shortcut_fired();
     let paste = state.paste.lock().unwrap();
+    if paste.desktop.panel_is_visible() {
+        return;
+    }
+    state.timer.shortcut_fired();
     let target = paste.desktop.frontmost_target().unwrap_or_else(|error| {
         eprintln!("frontmost_target failed: {error}");
         None
@@ -40,6 +43,7 @@ fn panel_ready(state: State<SpikeState>) {
 
 #[tauri::command]
 async fn panel_hide(state: State<'_, SpikeState>) -> Result<(), String> {
+    state.target.lock().unwrap().take();
     let paste = state.paste.lock().unwrap();
     paste
         .desktop
@@ -53,15 +57,17 @@ async fn paste_sentinel(state: State<'_, SpikeState>) -> Result<(), String> {
         .target
         .lock()
         .unwrap()
+        .take()
         .ok_or_else(|| "no target window was recorded".to_owned())?;
     let sentinel = Flavours {
         plain_text: Some(SENTINEL.to_owned()),
         ..Flavours::default()
     };
     let mut paste = state.paste.lock().unwrap();
-    paste
-        .run(target, &sentinel)
-        .map_err(|error| error.to_string())
+    paste.run(target, &sentinel).map_err(|error| {
+        eprintln!("paste failed: {error}");
+        error.to_string()
+    })
 }
 
 fn main() {

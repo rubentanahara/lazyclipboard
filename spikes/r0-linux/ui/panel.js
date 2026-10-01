@@ -6,6 +6,7 @@ const items = [...document.querySelectorAll('[role="option"]')];
 const keyLog = document.getElementById("key-log");
 const status = document.getElementById("status");
 let selected = 0;
+let pasting = false;
 
 function select(index) {
   selected = (index + items.length) % items.length;
@@ -23,12 +24,26 @@ function reset() {
 }
 
 async function paste() {
+  if (pasting) {
+    return;
+  }
+  pasting = true;
   status.textContent = "Pasting";
   try {
     await invoke("paste_sentinel");
     status.textContent = "";
   } catch (error) {
     status.textContent = `Paste failed: ${error}`;
+  } finally {
+    pasting = false;
+  }
+}
+
+async function hide() {
+  try {
+    await invoke("panel_hide");
+  } catch (error) {
+    status.textContent = `Hide failed: ${error}`;
   }
 }
 
@@ -51,6 +66,6 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     paste();
   } else if (event.key === "Escape") {
-    invoke("panel_hide");
+    hide();
   }
 });

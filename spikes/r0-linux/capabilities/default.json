@@ -3,5 +3,11 @@
   "identifier": "default",
   "description": "Events and commands the panel window may use",
   "windows": ["panel"],
-  "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-panel-ready",
+    "allow-panel-hide",
+    "allow-paste-sentinel"
+  ]
 }
