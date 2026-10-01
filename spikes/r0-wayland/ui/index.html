@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>r0-wayland panel</title>
+  <style>
+    input { width: 100%; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <input id="filter" aria-label="Filter" placeholder="type to filter" autofocus>
+  <p>Last key: <output id="key">none</output></p>
+  <p id="status" role="status">Press Enter to put the sentinel on the clipboard. Esc hides the panel.</p>
+  <script src="panel.js"></script>
+</body>
+</html>
