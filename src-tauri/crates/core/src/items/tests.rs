@@ -1,4 +1,4 @@
-use super::{classify, save, Classified, Flavours, PendingItem, RgbaImage, SaveRequest};
+use super::{classify, save, Classified, Flavours, PendingItem, SaveRequest};
 use crate::db;
 use crate::model::{CommandError, GroupId, ItemId};
 use rusqlite::Connection;
@@ -173,40 +173,65 @@ fn content_without_usable_plain_text_or_image_is_unsupported() {
 const TWO_BY_TWO_PIXELS: [u8; 16] = [
     255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 0,
 ];
+const COPIED_FROM_APP_COMMENT: &str = "copied from an app";
 
-fn two_by_two_image() -> RgbaImage {
-    RgbaImage {
-        width: 2,
-        height: 2,
-        rgba: TWO_BY_TWO_PIXELS.to_vec(),
+fn encode_png(width: u32, height: u32, rgba: &[u8], comment: Option<&str>) -> Vec<u8> {
+    let mut bytes = Vec::new();
+    let mut encoder = png::Encoder::new(&mut bytes, width, height);
+    encoder.set_color(png::ColorType::Rgba);
+    encoder.set_depth(png::BitDepth::Eight);
+    if let Some(comment) = comment {
+        encoder
+            .add_text_chunk("Comment".to_owned(), comment.to_owned())
+            .unwrap();
+    }
+    let mut writer = encoder.write_header().unwrap();
+    writer.write_image_data(rgba).unwrap();
+    writer.finish().unwrap();
+    bytes
+}
+
+fn two_by_two_png() -> Vec<u8> {
+    encode_png(2, 2, &TWO_BY_TWO_PIXELS, Some(COPIED_FROM_APP_COMMENT))
+}
+
+fn with_png(png: Vec<u8>) -> Flavours {
+    Flavours {
+        png: Some(png),
+        ..Flavours::default()
     }
 }
 
-fn decode_png(png: &[u8]) -> (png::OutputInfo, Vec<u8>) {
+fn decode_png(png: &[u8]) -> (png::OutputInfo, Vec<u8>, Vec<String>) {
     let mut reader = png::Decoder::new(std::io::Cursor::new(png))
         .read_info()
         .unwrap();
     let mut pixels = vec![0; reader.output_buffer_size().unwrap()];
     let info = reader.next_frame(&mut pixels).unwrap();
-    (info, pixels)
+    let text_chunks = reader
+        .info()
+        .uncompressed_latin1_text
+        .iter()
+        .map(|chunk| chunk.text.clone())
+        .collect();
+    (info, pixels, text_chunks)
 }
 
 #[test]
-fn an_image_is_re_encoded_to_a_png_that_decodes_to_the_same_pixels() {
-    let classified = classify(Flavours {
-        image: Some(two_by_two_image()),
-        ..Flavours::default()
-    })
-    .unwrap();
+fn an_image_is_re_encoded_to_a_png_with_the_same_pixels_and_without_metadata() {
+    let source = two_by_two_png();
+    assert_eq!(decode_png(&source).2, [COPIED_FROM_APP_COMMENT]);
+
+    let classified = classify(with_png(source)).unwrap();
 
     let Some(PendingItem::Image { png, width, height }) = classified.item else {
         panic!("expected an image item, got {classified:?}");
     };
-    let (info, pixels) = decode_png(&png);
+    let (info, pixels, text_chunks) = decode_png(&png);
     assert_eq!((width, height), (2, 2));
     assert_eq!((info.width, info.height), (2, 2));
-    assert_eq!(info.color_type, png::ColorType::Rgba);
     assert_eq!(pixels, TWO_BY_TWO_PIXELS);
+    assert!(text_chunks.is_empty(), "{text_chunks:?}");
 }
 
 #[test]
@@ -214,7 +239,7 @@ fn an_image_wins_over_text_and_formatted_html() {
     let classified = classify(Flavours {
         plain_text: Some("Release notes: read the changelog".to_owned()),
         html: Some(FORMATTED_BROWSER_COPY.to_owned()),
-        image: Some(two_by_two_image()),
+        png: Some(two_by_two_png()),
     })
     .unwrap();
 
@@ -230,9 +255,9 @@ fn an_image_wins_over_text_and_formatted_html() {
 
 const INCOMPRESSIBLE_SIDE: u32 = 1800;
 
-fn incompressible_image() -> RgbaImage {
+fn incompressible_png() -> Vec<u8> {
     let mut state: u64 = 0x9E37_79B9_7F4A_7C15;
-    let rgba = (0..INCOMPRESSIBLE_SIDE * INCOMPRESSIBLE_SIDE * 4)
+    let rgba: Vec<u8> = (0..INCOMPRESSIBLE_SIDE * INCOMPRESSIBLE_SIDE * 4)
         .map(|_| {
             state ^= state << 13;
             state ^= state >> 7;
@@ -240,18 +265,14 @@ fn incompressible_image() -> RgbaImage {
             (state >> 24) as u8
         })
         .collect();
-    RgbaImage {
-        width: INCOMPRESSIBLE_SIDE,
-        height: INCOMPRESSIBLE_SIDE,
-        rgba,
-    }
+    encode_png(INCOMPRESSIBLE_SIDE, INCOMPRESSIBLE_SIDE, &rgba, None)
 }
 
 #[test]
 fn an_image_over_ten_megabytes_is_skipped_and_counted_and_the_text_flavour_is_kept() {
     let classified = classify(Flavours {
         plain_text: Some("caption".to_owned()),
-        image: Some(incompressible_image()),
+        png: Some(incompressible_png()),
         ..Flavours::default()
     })
     .unwrap();
@@ -269,11 +290,7 @@ fn an_image_over_ten_megabytes_is_skipped_and_counted_and_the_text_flavour_is_ke
 
 #[test]
 fn an_oversized_image_alone_stores_nothing_and_reports_one_skipped() {
-    let classified = classify(Flavours {
-        image: Some(incompressible_image()),
-        ..Flavours::default()
-    })
-    .unwrap();
+    let classified = classify(with_png(incompressible_png())).unwrap();
 
     assert_eq!(
         classified,
@@ -285,23 +302,26 @@ fn an_oversized_image_alone_stores_nothing_and_reports_one_skipped() {
 }
 
 #[test]
-fn pixel_data_that_does_not_match_the_dimensions_is_a_validation_error() {
-    for (width, height, byte_count) in [(2, 2, 15), (2, 2, 17), (0, 0, 0), (0, 2, 8)] {
-        let result = classify(Flavours {
-            image: Some(RgbaImage {
-                width,
-                height,
-                rgba: vec![0; byte_count],
-            }),
+fn bytes_that_are_not_a_decodable_png_are_skipped_and_the_text_flavour_is_kept() {
+    let mut truncated = two_by_two_png();
+    truncated.truncate(truncated.len() / 2);
+
+    for bytes in [b"not a png".to_vec(), truncated, Vec::new()] {
+        let classified = classify(Flavours {
+            plain_text: Some("caption".to_owned()),
+            png: Some(bytes),
             ..Flavours::default()
-        });
+        })
+        .unwrap();
 
         assert_eq!(
-            result,
-            Err(CommandError::Validation {
-                field: "image".to_owned()
-            }),
-            "{width}x{height} with {byte_count} bytes"
+            classified,
+            Classified {
+                item: Some(PendingItem::Text {
+                    text: "caption".to_owned()
+                }),
+                skipped_images: 1,
+            }
         );
     }
 }
@@ -560,11 +580,7 @@ fn the_same_string_as_text_and_as_a_link_are_different_items() {
 }
 
 fn pending_image() -> (PendingItem, Vec<u8>) {
-    let classified = classify(Flavours {
-        image: Some(two_by_two_image()),
-        ..Flavours::default()
-    })
-    .unwrap();
+    let classified = classify(with_png(two_by_two_png())).unwrap();
     let item = classified.item.unwrap();
     let PendingItem::Image { png, .. } = &item else {
         panic!("expected an image item, got {item:?}");
@@ -728,4 +744,93 @@ fn html_that_grows_past_two_megabytes_when_sanitised_is_dropped_and_the_plain_te
             text: "a".to_owned()
         })
     );
+}
+
+#[test]
+fn recapturing_rich_text_with_longer_html_updates_the_stored_size() {
+    let mut store = store_with_groups();
+    let images = store.images.path();
+    let first = save(
+        &mut store.connection,
+        images,
+        request_for(WORK_GROUP, rich_text("note", "<i>note</i>"), 10),
+    )
+    .unwrap();
+    let longer_html = "<b><i>note</i></b>";
+
+    save(
+        &mut store.connection,
+        images,
+        request_for(WORK_GROUP, rich_text("note", longer_html), 20),
+    )
+    .unwrap();
+
+    assert_eq!(
+        row(&store.connection, first).byte_size,
+        ("note".len() + longer_html.len()) as i64
+    );
+}
+
+#[test]
+fn recapturing_without_a_known_source_app_keeps_the_recorded_one() {
+    let mut store = store_with_groups();
+    let images = store.images.path();
+    let from_safari = SaveRequest {
+        source_app: Some("Safari".to_owned()),
+        ..text_request(WORK_GROUP, "alpha", 10)
+    };
+    let first = save(&mut store.connection, images, from_safari).unwrap();
+
+    save(
+        &mut store.connection,
+        images,
+        text_request(WORK_GROUP, "alpha", 20),
+    )
+    .unwrap();
+
+    let stored = row(&store.connection, first);
+    assert_eq!(stored.source_app.as_deref(), Some("Safari"));
+    assert_eq!(stored.captured_at, 20);
+}
+
+#[test]
+fn debug_output_never_contains_clipboard_content() {
+    let secret = "hunter2-sentinel";
+    let flavours = Flavours {
+        plain_text: Some(secret.to_owned()),
+        html: Some(format!("<b>{secret}</b>")),
+        png: Some(secret.as_bytes().to_vec()),
+    };
+    let items = [
+        PendingItem::Text {
+            text: secret.to_owned(),
+        },
+        PendingItem::RichText {
+            plain_text: secret.to_owned(),
+            html: format!("<b>{secret}</b>"),
+        },
+        PendingItem::Link {
+            url: format!("https://example.com/{secret}"),
+        },
+        PendingItem::Image {
+            png: secret.as_bytes().to_vec(),
+            width: 1,
+            height: 1,
+        },
+    ];
+
+    let mut printed = vec![format!("{flavours:?}")];
+    for item in items {
+        printed.push(format!("{item:?}"));
+        printed.push(format!("{:?}", request_for(WORK_GROUP, item.clone(), 0)));
+        printed.push(format!("{:?}", stored(item)));
+    }
+
+    for output in printed {
+        assert!(!output.contains(secret), "{output}");
+        assert!(
+            !output.contains(&format!("{:?}", secret.as_bytes())),
+            "{output}"
+        );
+    }
 }

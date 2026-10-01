@@ -1,6 +1,6 @@
-use super::image::encode_png;
+use super::image::normalise_png;
 use super::sanitise::sanitise;
-use super::{Classified, Flavours, PendingItem, RgbaImage};
+use super::{Classified, Flavours, PendingItem};
 use crate::model::CommandError;
 
 const MAX_PLAIN_TEXT_BYTES: usize = 1024 * 1024;
@@ -10,8 +10,8 @@ const LINK_SCHEMES: [&str; 2] = ["http://", "https://"];
 
 pub fn classify(flavours: Flavours) -> Result<Classified, CommandError> {
     let mut skipped_images = 0;
-    if let Some(image) = flavours.image {
-        match image_item(image)? {
+    if let Some(source) = &flavours.png {
+        match image_item(source) {
             Some(item) => {
                 return Ok(Classified {
                     item: Some(item),
@@ -34,16 +34,13 @@ pub fn classify(flavours: Flavours) -> Result<Classified, CommandError> {
     }
 }
 
-fn image_item(image: RgbaImage) -> Result<Option<PendingItem>, CommandError> {
-    let png = encode_png(&image)?;
-    if png.len() > MAX_PNG_BYTES {
-        return Ok(None);
-    }
-    Ok(Some(PendingItem::Image {
-        png,
+fn image_item(source: &[u8]) -> Option<PendingItem> {
+    let image = normalise_png(source).filter(|image| image.png.len() <= MAX_PNG_BYTES)?;
+    Some(PendingItem::Image {
+        png: image.png,
         width: image.width,
         height: image.height,
-    }))
+    })
 }
 
 fn text_item(

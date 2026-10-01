@@ -14,7 +14,8 @@ pub struct SaveRequest {
     pub captured_at: i64,
 }
 
-struct Columns<'a> {
+struct Capture<'a> {
+    request: &'a SaveRequest,
     kind: &'static str,
     plain_text: Option<&'a str>,
     html: Option<&'a str>,
@@ -34,16 +35,16 @@ pub fn save(
     images_dir: &Path,
     request: SaveRequest,
 ) -> Result<ItemId, CommandError> {
-    let columns = columns(&request.item);
+    let capture = capture(&request);
     let transaction = connection.transaction().map_err(database_failure)?;
     ensure_group_exists(&transaction, request.group)?;
     let (row_id, new_image_path) =
-        match find_duplicate(&transaction, request.group, &columns.content_hash)? {
+        match find_duplicate(&transaction, request.group, &capture.content_hash)? {
             Some(row_id) => {
-                move_to_top(&transaction, row_id, &columns, &request)?;
+                move_to_top(&transaction, row_id, &capture)?;
                 (row_id, None)
             }
-            None => insert(&transaction, images_dir, &columns, &request)?,
+            None => insert(&transaction, images_dir, &capture)?,
         };
     if let Err(error) = transaction.commit() {
         discard_orphan_image(new_image_path.as_deref());
@@ -54,9 +55,10 @@ pub fn save(
         .map_err(|_| CommandError::Internal)
 }
 
-fn columns(item: &PendingItem) -> Columns<'_> {
-    match item {
-        PendingItem::Text { text } => Columns {
+fn capture(request: &SaveRequest) -> Capture<'_> {
+    match &request.item {
+        PendingItem::Text { text } => Capture {
+            request,
             kind: "text",
             plain_text: Some(text),
             html: None,
@@ -64,7 +66,8 @@ fn columns(item: &PendingItem) -> Columns<'_> {
             byte_size: text.len(),
             content_hash: content_hash("text", text.as_bytes()),
         },
-        PendingItem::RichText { plain_text, html } => Columns {
+        PendingItem::RichText { plain_text, html } => Capture {
+            request,
             kind: "rich_text",
             plain_text: Some(plain_text),
             html: Some(html),
@@ -72,7 +75,8 @@ fn columns(item: &PendingItem) -> Columns<'_> {
             byte_size: plain_text.len() + html.len(),
             content_hash: content_hash("rich_text", plain_text.as_bytes()),
         },
-        PendingItem::Link { url } => Columns {
+        PendingItem::Link { url } => Capture {
+            request,
             kind: "link",
             plain_text: Some(url),
             html: None,
@@ -80,7 +84,8 @@ fn columns(item: &PendingItem) -> Columns<'_> {
             byte_size: url.len(),
             content_hash: content_hash("link", url.as_bytes()),
         },
-        PendingItem::Image { png, width, height } => Columns {
+        PendingItem::Image { png, width, height } => Capture {
+            request,
             kind: "image",
             plain_text: None,
             html: None,
@@ -129,10 +134,9 @@ fn find_duplicate(
 fn insert(
     transaction: &Transaction,
     images_dir: &Path,
-    columns: &Columns,
-    request: &SaveRequest,
+    capture: &Capture,
 ) -> Result<(i64, Option<PathBuf>), CommandError> {
-    let image_path = columns
+    let image_path = capture
         .image
         .as_ref()
         .map(|image| write_image(images_dir, image.png))
@@ -144,17 +148,17 @@ fn insert(
     let inserted = transaction.execute(
         "INSERT INTO items (group_id, kind, plain_text, html, image_file, image_width, image_height, byte_size, content_hash, source_app, captured_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
         params![
-            request.group.0,
-            columns.kind,
-            columns.plain_text,
-            columns.html,
+            capture.request.group.0,
+            capture.kind,
+            capture.plain_text,
+            capture.html,
             image_file,
-            columns.image.as_ref().map(|image| image.width),
-            columns.image.as_ref().map(|image| image.height),
-            columns.byte_size as i64,
-            columns.content_hash,
-            request.source_app,
-            request.captured_at,
+            capture.image.as_ref().map(|image| image.width),
+            capture.image.as_ref().map(|image| image.height),
+            capture.byte_size as i64,
+            capture.content_hash,
+            capture.request.source_app,
+            capture.request.captured_at,
         ],
     );
     if let Err(error) = inserted {
@@ -184,13 +188,18 @@ fn discard_orphan_image(path: Option<&Path>) {
 fn move_to_top(
     transaction: &Transaction,
     row_id: i64,
-    columns: &Columns,
-    request: &SaveRequest,
+    capture: &Capture,
 ) -> Result<(), CommandError> {
     transaction
         .execute(
-            "UPDATE items SET captured_at = ?1, source_app = ?2, html = COALESCE(?3, html) WHERE id = ?4",
-            params![request.captured_at, request.source_app, columns.html, row_id],
+            "UPDATE items SET captured_at = ?1, source_app = COALESCE(?2, source_app), html = COALESCE(?3, html), byte_size = ?4 WHERE id = ?5",
+            params![
+                capture.request.captured_at,
+                capture.request.source_app,
+                capture.html,
+                capture.byte_size as i64,
+                row_id,
+            ],
         )
         .map_err(database_failure)?;
     Ok(())
