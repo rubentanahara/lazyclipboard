@@ -1,0 +1,21 @@
+[package]
+name = "r0-linux"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "r0_linux"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+clipboard-rs = "0.3"
+lazyclipboard-core = { path = "../../src-tauri/crates/core" }
+lazyclipboard-os = { path = "../../src-tauri/crates/os" }
+tauri = { version = "2", features = [] }
+tauri-plugin-global-shortcut = "2"
+x11rb = { version = "0.14", features = ["xtest"] }
