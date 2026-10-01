@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>r0-linux panel</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <input id="query" type="text" autocomplete="off" aria-label="Search items" />
+    <ul id="items" role="listbox" aria-label="Items">
+      <li role="option" aria-selected="true">Item one</li>
+      <li role="option" aria-selected="false">Item two</li>
+      <li role="option" aria-selected="false">Item three</li>
+    </ul>
+    <p id="key-log" aria-live="polite"></p>
+    <p id="status" role="status"></p>
+    <script src="panel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  padding: 16px;
+  background: Canvas;
+  color: CanvasText;
+  font: 16px/24px system-ui, sans-serif;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+}
+
+ul {
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  padding: 4px 8px;
+}
+
+li[aria-selected="true"] {
+  background: Highlight;
+  color: HighlightText;
+}
+
+li[aria-selected="true"]::before {
+  content: "\25B8  ";
+}
+
+p {
+  margin: 4px 0;
+}
