@@ -714,3 +714,18 @@ fn a_soft_deleted_item_is_not_revived_by_capturing_it_again() {
         [captured_again]
     );
 }
+
+#[test]
+fn html_that_grows_past_two_megabytes_when_sanitised_is_dropped_and_the_plain_text_is_kept() {
+    let grows_when_sanitised = "<a>".repeat(2 * ONE_MEGABYTE / "<a>".len());
+    assert!(grows_when_sanitised.len() <= 2 * ONE_MEGABYTE);
+
+    let classified = classify(with_html("a", &grows_when_sanitised)).unwrap();
+
+    assert_eq!(
+        classified,
+        stored(PendingItem::Text {
+            text: "a".to_owned()
+        })
+    );
+}

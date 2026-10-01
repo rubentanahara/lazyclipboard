@@ -58,7 +58,8 @@ fn text_item(
     }
     let sanitised = html
         .filter(|html| html.len() <= MAX_HTML_BYTES)
-        .map(|html| sanitise(&html));
+        .map(|html| sanitise(&html))
+        .filter(|sanitised| sanitised.html.len() <= MAX_HTML_BYTES);
     if let Some(sanitised) = sanitised.filter(|sanitised| sanitised.has_formatting) {
         return Ok(PendingItem::RichText {
             plain_text: text,
