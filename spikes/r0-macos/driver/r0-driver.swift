@@ -6,7 +6,7 @@ let sentinel = "R0-SENTINEL-7f3a"
 let initialLine = "AAABBB"
 let caretOffset = 3
 let expectedAfterPaste = "AAA" + sentinel + "BBB"
-let expectedPanelKeys = ["a", "b", "ArrowDown", "ArrowUp", "Escape"]
+let expectedPanelKeys = ["Character", "Character", "ArrowDown", "ArrowUp", "Escape"]
 
 enum KeyCode {
     static let a: CGKeyCode = 0

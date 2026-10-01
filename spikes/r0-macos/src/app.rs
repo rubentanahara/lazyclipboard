@@ -181,6 +181,7 @@ fn paste_sequence(app: &AppHandle) -> Result<(), String> {
     let keycode = on_main_thread(app, layout::paste_keycode)??;
     let prior = pasteboard::snapshot();
     let written = pasteboard::write_transient_text(SENTINEL);
+    let mut restoring = pasteboard::RestoreOnDrop::new(prior, written);
     let hiding_app = app.clone();
     on_main_thread(app, move || hide_panel(&hiding_app))?;
     let modifiers_released = keys::wait_modifiers_released(MODIFIER_RELEASE_TIMEOUT);
@@ -196,10 +197,7 @@ fn paste_sequence(app: &AppHandle) -> Result<(), String> {
         }),
     );
     sleep(restore_delay());
-    let restored = pasteboard::should_restore(written, pasteboard::change_count());
-    if restored {
-        pasteboard::restore(&prior);
-    }
+    let restored = restoring.restore_now();
     log(
         "paste_done",
         json!({ "restored": restored, "restore_delay_ms": restore_delay().as_millis() as u64 }),

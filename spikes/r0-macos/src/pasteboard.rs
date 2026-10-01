@@ -31,7 +31,38 @@ pub fn write_transient_text(text: &str) -> isize {
     write_items(&[item])
 }
 
-pub fn restore(snapshot: &Snapshot) -> isize {
+pub struct RestoreOnDrop {
+    prior: Option<Snapshot>,
+    change_count_after_our_write: isize,
+}
+
+impl RestoreOnDrop {
+    pub fn new(prior: Snapshot, change_count_after_our_write: isize) -> Self {
+        Self {
+            prior: Some(prior),
+            change_count_after_our_write,
+        }
+    }
+
+    pub fn restore_now(&mut self) -> bool {
+        let Some(prior) = self.prior.take() else {
+            return false;
+        };
+        let untouched = should_restore(self.change_count_after_our_write, change_count());
+        if untouched {
+            restore(&prior);
+        }
+        untouched
+    }
+}
+
+impl Drop for RestoreOnDrop {
+    fn drop(&mut self) {
+        self.restore_now();
+    }
+}
+
+fn restore(snapshot: &Snapshot) -> isize {
     let items: Vec<_> = snapshot
         .items
         .iter()

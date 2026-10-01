@@ -29,7 +29,7 @@ listen("panel:show", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  invoke("panel_key", { key: event.key });
+  invoke("panel_key", { key: event.key.length === 1 ? "Character" : event.key });
   if (event.key === "Escape") {
     invoke("panel_hide");
   } else if (event.key === "Enter") {
